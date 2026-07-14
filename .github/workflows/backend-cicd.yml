@@ -1,0 +1,23 @@
+# Mirror: when backend submodule pointer updates, remind / optional sync
+# Primary CI/CD lives in Mao-SokHun/wanderlust-api (see docs/CI_CD.md)
+name: Backend deploy reminder
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend"
+      - "docs/CI_CD.md"
+      - ".github/workflows/backend-cicd.yml"
+  workflow_dispatch:
+
+jobs:
+  note:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Where to push API changes
+        run: |
+          echo "API deploys from https://github.com/Mao-SokHun/wanderlust-api"
+          echo "cd backend && git push origin main"
+          echo "Docs: docs/CI_CD.md"
+          echo "Live: https://wanderlust-api-dm3y.onrender.com/api/health"
