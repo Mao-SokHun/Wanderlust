@@ -57,6 +57,7 @@ object WanderlustImages {
             title.contains("Bokor", ignoreCase = true) || title.contains("Kulen", ignoreCase = true) -> MOUNTAIN
             title.contains("Tonle", ignoreCase = true) -> placePhotos["tonle-sap"] ?: CITY
             title.contains("Dolphin", ignoreCase = true) -> placePhotos["kratie-dolphins"] ?: CITY
+            category.equals("Nature", ignoreCase = true) -> placePhotos["tonle-sap"] ?: CITY
             category.equals("Beach", ignoreCase = true) -> BEACH
             category.equals("Mountain", ignoreCase = true) -> MOUNTAIN
             category.equals("Temple", ignoreCase = true) -> TEMPLE

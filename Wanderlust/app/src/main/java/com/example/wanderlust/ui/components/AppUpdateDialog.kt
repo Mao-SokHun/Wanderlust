@@ -12,7 +12,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
+import com.example.wanderlust.locale.stringApp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.wanderlust.R
@@ -30,7 +30,7 @@ fun AppUpdateDialog(
         },
         title = {
             Text(
-                stringResource(
+                stringApp(
                     if (update.forceUpdate) R.string.update_required_title else R.string.update_available_title,
                 ),
                 fontWeight = FontWeight.Bold,
@@ -42,7 +42,7 @@ fun AppUpdateDialog(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
-                    stringResource(
+                    stringApp(
                         R.string.update_available_body,
                         update.info.versionName,
                         update.info.versionCode,
@@ -69,13 +69,13 @@ fun AppUpdateDialog(
                     if (!update.forceUpdate) onDismiss()
                 },
             ) {
-                Text(stringResource(R.string.update_download))
+                Text(stringApp(R.string.update_download))
             }
         },
         dismissButton = {
             if (!update.forceUpdate) {
                 TextButton(onClick = onDismiss) {
-                    Text(stringResource(R.string.update_later))
+                    Text(stringApp(R.string.update_later))
                 }
             }
         },

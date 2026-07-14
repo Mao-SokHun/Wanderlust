@@ -73,7 +73,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
+import com.example.wanderlust.locale.stringApp
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -83,8 +83,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.wanderlust.R
 import com.example.wanderlust.data.RecentNearbyPlace
 import com.example.wanderlust.data.SessionManager
-import com.example.wanderlust.data.formatDistanceKm
-import com.example.wanderlust.data.formatWalkMinutes
+import com.example.wanderlust.data.formatDistanceKmValue
 import com.example.wanderlust.data.model.NearbyMoment
 import com.example.wanderlust.data.model.NearbyPlace
 import com.example.wanderlust.data.model.NearbyPlaceCategories
@@ -123,9 +122,9 @@ fun NearbyPlacesExplorer(
     val detailSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     val savedText = stringLocalized(R.string.msg_saved, R.string.msg_saved_kh)
-    val signInRequired = stringResource(R.string.nearby_sign_in_to_save)
+    val signInRequired = stringApp(R.string.nearby_sign_in_to_save)
     val saveFailed = stringLocalized(R.string.msg_save_failed, R.string.msg_save_failed_kh)
-    val copiedText = stringResource(R.string.nearby_copied)
+    val copiedText = stringApp(R.string.nearby_copied)
 
     fun openPlaceDetails(place: NearbyPlace) {
         viewModel.rememberRecent(place)
@@ -204,11 +203,11 @@ fun NearbyPlacesExplorer(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         Text(
-                            stringResource(R.string.nearby_disabled_settings),
+                            stringApp(R.string.nearby_disabled_settings),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         Button(onClick = { openAppSettings(context) }) {
-                            Text(stringResource(R.string.nearby_open_settings))
+                            Text(stringApp(R.string.nearby_open_settings))
                         }
                     }
                 }
@@ -221,7 +220,7 @@ fun NearbyPlacesExplorer(
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
                             Text(
-                                stringResource(R.string.nearby_permission_denied),
+                                stringApp(R.string.nearby_permission_denied),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                             Button(
@@ -234,19 +233,19 @@ fun NearbyPlacesExplorer(
                                     )
                                 },
                             ) {
-                                Text(stringResource(R.string.nearby_try_permission_again))
+                                Text(stringApp(R.string.nearby_try_permission_again))
                             }
                             TextButton(onClick = { openAppSettings(context) }) {
-                                Text(stringResource(R.string.nearby_open_settings))
+                                Text(stringApp(R.string.nearby_open_settings))
                             }
                         }
                     }
                 } else {
-                    LoadingBlock(stringResource(R.string.nearby_requesting_permission))
+                    LoadingBlock(stringApp(R.string.nearby_requesting_permission))
                 }
             }
             state.isLoadingLocation && state.userLatLng == null -> {
-                LoadingBlock(stringResource(R.string.nearby_finding))
+                LoadingBlock(stringApp(R.string.nearby_finding))
             }
             state.errorMessage != null && state.userLatLng == null -> {
                 StitchGhostCard(Modifier.fillMaxWidth()) {
@@ -261,7 +260,7 @@ fun NearbyPlacesExplorer(
                         Button(
                             onClick = { viewModel.retryLocation() },
                         ) {
-                            Text(stringResource(R.string.btn_retry))
+                            Text(stringApp(R.string.btn_retry))
                         }
                     }
                 }
@@ -272,15 +271,6 @@ fun NearbyPlacesExplorer(
                     activeMomentId = state.activeMomentId,
                     onSelect = viewModel::applyMoment,
                 )
-                if (state.recentPlaces.isNotEmpty()) {
-                    Spacer(Modifier.height(8.dp))
-                    RecentPlacesRow(
-                        recent = state.recentPlaces,
-                        onSelect = { recent ->
-                            openPlaceDetails(viewModel.recentAsNearby(recent))
-                        },
-                    )
-                }
                 Spacer(Modifier.height(8.dp))
                 CompactCategoryChips(
                     selected = state.selectedCategory,
@@ -310,7 +300,7 @@ fun NearbyPlacesExplorer(
                     )
                     Spacer(Modifier.height(8.dp))
                     when {
-                        state.isLoadingPlaces -> LoadingBlock(stringResource(R.string.nearby_loading_places))
+                        state.isLoadingPlaces -> LoadingBlock(stringApp(R.string.nearby_loading_places))
                         state.errorMessage != null && state.places.isEmpty() -> {
                             Text(
                                 state.errorMessage.orEmpty(),
@@ -329,7 +319,7 @@ fun NearbyPlacesExplorer(
                                 Spacer(Modifier.height(10.dp))
                             }
                             Text(
-                                stringResource(R.string.nearby_results_count, state.places.size),
+                                stringApp(R.string.nearby_results_count, state.places.size),
                                 style = MaterialTheme.typography.labelLarge,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.padding(bottom = 8.dp),
@@ -396,7 +386,7 @@ private fun RightNowMomentsRow(
     )
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(
-            stringResource(R.string.nearby_right_now),
+            stringApp(R.string.nearby_right_now),
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -420,7 +410,7 @@ private fun RightNowMomentsRow(
 }
 
 @Composable
-private fun momentLabel(momentId: String): String = stringResource(
+private fun momentLabel(momentId: String): String = stringApp(
     when (momentId) {
         "morning_cafe" -> R.string.nearby_moment_morning_cafe
         "morning_bakery" -> R.string.nearby_moment_morning_bakery
@@ -443,7 +433,7 @@ private fun RecentPlacesRow(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(
-            stringResource(R.string.nearby_recent),
+            stringApp(R.string.nearby_recent),
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -483,7 +473,7 @@ private fun CompareTopStrip(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(
-            stringResource(R.string.nearby_compare_title),
+            stringApp(R.string.nearby_compare_title),
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -534,7 +524,7 @@ private fun ComparePlaceChip(
         Column(Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             if (isBest) {
                 Text(
-                    stringResource(R.string.nearby_best_pick),
+                    stringApp(R.string.nearby_best_pick),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
@@ -569,9 +559,9 @@ private fun ComparePlaceChip(
                 overflow = TextOverflow.Ellipsis,
             )
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
-                place.walkMinutes?.let {
+                place.distanceKm?.let { km ->
                     Text(
-                        stringResource(R.string.nearby_walk_min, it),
+                        stringApp(R.string.nearby_distance_km, formatDistanceKmValue(km)),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -582,12 +572,12 @@ private fun ComparePlaceChip(
             }
             when (place.openNow) {
                 true -> Text(
-                    stringResource(R.string.nearby_status_open),
+                    stringApp(R.string.nearby_status_open),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.tertiary,
                 )
                 false -> Text(
-                    stringResource(R.string.nearby_status_closed),
+                    stringApp(R.string.nearby_status_closed),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.error,
                 )
@@ -597,6 +587,25 @@ private fun ComparePlaceChip(
     }
 }
 
+
+@Composable
+private fun localizedNearbyCategory(label: String): String = when (label) {
+    "Cafe" -> stringApp(R.string.nearby_cat_cafe)
+    "Restaurant" -> stringApp(R.string.nearby_cat_restaurant)
+    "ATM" -> stringApp(R.string.nearby_cat_atm)
+    "Pharmacy" -> stringApp(R.string.nearby_cat_pharmacy)
+    "Gas" -> stringApp(R.string.nearby_cat_gas)
+    "Store" -> stringApp(R.string.nearby_cat_store)
+    "Supermarket" -> stringApp(R.string.nearby_cat_supermarket)
+    "Hotel" -> stringApp(R.string.nearby_cat_hotel)
+    "Hospital" -> stringApp(R.string.nearby_cat_hospital)
+    "Bank" -> stringApp(R.string.nearby_cat_bank)
+    "Park" -> stringApp(R.string.nearby_cat_park)
+    "Gym" -> stringApp(R.string.nearby_cat_gym)
+    "Bakery" -> stringApp(R.string.nearby_cat_bakery)
+    "Bar" -> stringApp(R.string.nearby_cat_bar)
+    else -> label
+}
 @Composable
 private fun CompactCategoryChips(
     selected: String?,
@@ -618,7 +627,7 @@ private fun CompactCategoryChips(
         FilterChip(
             selected = selected == null,
             onClick = { onMoreSelect(null) },
-            label = { Text(stringResource(R.string.filter_all)) },
+            label = { Text(stringApp(R.string.filter_all)) },
             colors = chipColors,
         )
         quickLabels.forEach { label ->
@@ -628,7 +637,7 @@ private fun CompactCategoryChips(
                 leadingIcon = {
                     Icon(iconForQuickNeed(label), null, Modifier.size(16.dp))
                 },
-                label = { Text(label) },
+                label = { Text(localizedNearbyCategory(label)) },
                 colors = chipColors,
             )
         }
@@ -636,7 +645,7 @@ private fun CompactCategoryChips(
             FilterChip(
                 selected = selected == label,
                 onClick = { onMoreSelect(if (selected == label) null else label) },
-                label = { Text(label) },
+                label = { Text(localizedNearbyCategory(label)) },
                 colors = chipColors,
             )
         }
@@ -669,9 +678,12 @@ private fun CompactFilterRow(
                 label = {
                     Text(
                         when (meters) {
-                            500 -> stringResource(R.string.nearby_radius_500)
-                            1000 -> stringResource(R.string.nearby_radius_1000)
-                            else -> stringResource(R.string.nearby_radius_2000)
+                            500 -> stringApp(R.string.nearby_radius_500)
+                            1000 -> stringApp(R.string.nearby_radius_1000)
+                            2000 -> stringApp(R.string.nearby_radius_2000)
+                            5000 -> stringApp(R.string.nearby_radius_5000)
+                            10000 -> stringApp(R.string.nearby_radius_10000)
+                            else -> "${meters / 1000} km"
                         },
                     )
                 },
@@ -681,19 +693,19 @@ private fun CompactFilterRow(
         FilterChip(
             selected = sortMode == NearbySortMode.Nearest,
             onClick = { onSortModeChange(NearbySortMode.Nearest) },
-            label = { Text(stringResource(R.string.nearby_sort_nearest)) },
+            label = { Text(stringApp(R.string.nearby_sort_nearest)) },
             colors = chipColors,
         )
         FilterChip(
             selected = sortMode == NearbySortMode.TopRated,
             onClick = { onSortModeChange(NearbySortMode.TopRated) },
-            label = { Text(stringResource(R.string.nearby_sort_top_rated)) },
+            label = { Text(stringApp(R.string.nearby_sort_top_rated)) },
             colors = chipColors,
         )
         FilterChip(
             selected = openNowOnly,
             onClick = { onOpenNowOnlyChange(!openNowOnly) },
-            label = { Text(stringResource(R.string.nearby_open_now)) },
+            label = { Text(stringApp(R.string.nearby_open_now)) },
             colors = chipColors,
         )
     }
@@ -748,7 +760,7 @@ private fun NearbyPlacesMap(
     ) {
         Marker(
             state = youMarkerState,
-            title = stringResource(R.string.nearby_you_marker),
+            title = stringApp(R.string.nearby_you_marker),
         )
         places.forEach { place ->
             key(place.id) {
@@ -829,7 +841,7 @@ private fun NearbyPlaceActionCard(
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 if (isBestPick) {
                     Text(
-                        stringResource(R.string.nearby_best_pick),
+                        stringApp(R.string.nearby_best_pick),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold,
@@ -859,22 +871,23 @@ private fun NearbyPlaceActionCard(
                     }
                     when (place.openNow) {
                         true -> Text(
-                            stringResource(R.string.nearby_status_open),
+                            stringApp(R.string.nearby_status_open),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.tertiary,
                         )
                         false -> Text(
-                            stringResource(R.string.nearby_status_closed),
+                            stringApp(R.string.nearby_status_closed),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.error,
                         )
                         null -> Unit
                     }
                 }
+                val distanceLabel = place.distanceKm?.let {
+                    stringApp(R.string.nearby_distance_km, formatDistanceKmValue(it))
+                }
                 val meta = buildString {
-                    place.walkMinutes?.let {
-                        append(formatWalkMinutes(it))
-                    } ?: place.distanceKm?.let { append(formatDistanceKm(it)) }
+                    distanceLabel?.let { append(it) }
                     if (place.rating != null) {
                         if (isNotEmpty()) append(" • ")
                         append("★ ${place.rating}")
@@ -894,7 +907,7 @@ private fun NearbyPlaceActionCard(
                     )
                 }
                 Text(
-                    stringResource(R.string.nearby_tap_for_details),
+                    stringApp(R.string.nearby_tap_for_details),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.primary,
                 )
@@ -905,13 +918,13 @@ private fun NearbyPlaceActionCard(
                     TextButton(onClick = onDirections) {
                         Icon(Icons.Default.Directions, null, Modifier.size(16.dp))
                         Spacer(Modifier.width(2.dp))
-                        Text(stringResource(R.string.nearby_directions), style = MaterialTheme.typography.labelMedium)
+                        Text(stringApp(R.string.nearby_directions), style = MaterialTheme.typography.labelMedium)
                     }
                     if (onCall != null) {
                         TextButton(onClick = onCall) {
                             Icon(Icons.Default.Call, null, Modifier.size(16.dp))
                             Spacer(Modifier.width(2.dp))
-                            Text(stringResource(R.string.nearby_call), style = MaterialTheme.typography.labelMedium)
+                            Text(stringApp(R.string.nearby_call), style = MaterialTheme.typography.labelMedium)
                         }
                     }
                     TextButton(
@@ -926,7 +939,7 @@ private fun NearbyPlaceActionCard(
                         )
                         Spacer(Modifier.width(2.dp))
                         Text(
-                            stringResource(if (isSaved) R.string.nearby_saved else R.string.nearby_save),
+                            stringApp(if (isSaved) R.string.nearby_saved else R.string.nearby_save),
                             style = MaterialTheme.typography.labelMedium,
                         )
                     }
@@ -940,11 +953,13 @@ private fun NearbyPlaceActionCard(
 private fun bestPickReasonText(place: NearbyPlace): String {
     val parts = NearbyPlaceCategories.bestPickReasonKeyParts(place)
     val rating = parts.rating?.let { String.format("%.1f", it) } ?: "—"
-    val walk = parts.walkMinutes?.let { formatWalkMinutes(it) } ?: "near you"
+    val distance = place.distanceKm?.let {
+        stringApp(R.string.nearby_distance_km, formatDistanceKmValue(it))
+    } ?: stringApp(R.string.nearby_you_marker)
     return when (parts.openKey) {
-        "open" -> stringResource(R.string.nearby_best_reason_open, rating, walk)
-        "closed" -> stringResource(R.string.nearby_best_reason_closed, rating, walk)
-        else -> stringResource(R.string.nearby_best_reason_nearby, rating, walk)
+        "open" -> stringApp(R.string.nearby_best_reason_open, rating, distance)
+        "closed" -> stringApp(R.string.nearby_best_reason_closed, rating, distance)
+        else -> stringApp(R.string.nearby_best_reason_nearby, rating, distance)
     }
 }
 
@@ -989,7 +1004,7 @@ private fun NearbyPlaceDetailSheet(
         }
         if (isBestPick) {
             Text(
-                stringResource(R.string.nearby_best_pick),
+                stringApp(R.string.nearby_best_pick),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
@@ -1016,12 +1031,12 @@ private fun NearbyPlaceDetailSheet(
             }
             when (place.openNow) {
                 true -> Text(
-                    stringResource(R.string.nearby_status_open),
+                    stringApp(R.string.nearby_status_open),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.tertiary,
                 )
                 false -> Text(
-                    stringResource(R.string.nearby_status_closed),
+                    stringApp(R.string.nearby_status_closed),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.error,
                 )
@@ -1029,12 +1044,13 @@ private fun NearbyPlaceDetailSheet(
             }
         }
         val reviewsLabel = place.userRatingsTotal?.let {
-            stringResource(R.string.nearby_reviews_count, it)
+            stringApp(R.string.nearby_reviews_count, it)
+        }
+        val distanceLabel = place.distanceKm?.let {
+            stringApp(R.string.nearby_distance_km, formatDistanceKmValue(it))
         }
         val meta = buildString {
-            place.walkMinutes?.let {
-                append(formatWalkMinutes(it))
-            } ?: place.distanceKm?.let { append(formatDistanceKm(it)) }
+            distanceLabel?.let { append(it) }
             if (place.rating != null) {
                 if (isNotEmpty()) append("  •  ")
                 append("★ ${place.rating}")
@@ -1047,7 +1063,7 @@ private fun NearbyPlaceDetailSheet(
         if (place.address.isNotBlank()) {
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(
-                    stringResource(R.string.nearby_detail_address),
+                    stringApp(R.string.nearby_detail_address),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -1057,7 +1073,7 @@ private fun NearbyPlaceDetailSheet(
         if (!place.phoneNumber.isNullOrBlank()) {
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(
-                    stringResource(R.string.nearby_detail_phone),
+                    stringApp(R.string.nearby_detail_phone),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -1065,7 +1081,7 @@ private fun NearbyPlaceDetailSheet(
             }
         }
         Text(
-            stringResource(
+            stringApp(
                 R.string.nearby_detail_coords,
                 String.format("%.5f", place.latitude),
                 String.format("%.5f", place.longitude),
@@ -1076,18 +1092,18 @@ private fun NearbyPlaceDetailSheet(
         Button(onClick = onDirections, modifier = Modifier.fillMaxWidth()) {
             Icon(Icons.Default.Directions, null, Modifier.size(18.dp))
             Spacer(Modifier.width(8.dp))
-            Text(stringResource(R.string.nearby_directions))
+            Text(stringApp(R.string.nearby_directions))
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedButton(onClick = onCopyAddress, modifier = Modifier.weight(1f)) {
                 Icon(Icons.Default.ContentCopy, null, Modifier.size(18.dp))
                 Spacer(Modifier.width(6.dp))
-                Text(stringResource(R.string.nearby_copy_address))
+                Text(stringApp(R.string.nearby_copy_address))
             }
             OutlinedButton(onClick = onShare, modifier = Modifier.weight(1f)) {
                 Icon(Icons.Default.Share, null, Modifier.size(18.dp))
                 Spacer(Modifier.width(6.dp))
-                Text(stringResource(R.string.nearby_share))
+                Text(stringApp(R.string.nearby_share))
             }
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -1095,7 +1111,7 @@ private fun NearbyPlaceDetailSheet(
                 Button(onClick = onCall, modifier = Modifier.weight(1f)) {
                     Icon(Icons.Default.Call, null, Modifier.size(18.dp))
                     Spacer(Modifier.width(6.dp))
-                    Text(stringResource(R.string.nearby_call))
+                    Text(stringApp(R.string.nearby_call))
                 }
             }
             Button(
@@ -1109,11 +1125,11 @@ private fun NearbyPlaceDetailSheet(
                     Modifier.size(18.dp),
                 )
                 Spacer(Modifier.width(6.dp))
-                Text(stringResource(if (isSaved) R.string.nearby_saved else R.string.nearby_save))
+                Text(stringApp(if (isSaved) R.string.nearby_saved else R.string.nearby_save))
             }
         }
         TextButton(onClick = onClose, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.nearby_detail_close))
+            Text(stringApp(R.string.nearby_detail_close))
         }
     }
 }

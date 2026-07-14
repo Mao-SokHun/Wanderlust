@@ -15,7 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.res.stringResource
+import com.example.wanderlust.locale.stringApp
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -34,12 +34,12 @@ fun ExportDataScreen(onBack: () -> Unit) {
     }
 
     StickyScrollScreen(
-        title = stringResource(R.string.admin_export_title),
+        title = stringApp(R.string.admin_export_title),
         onBack = onBack,
     ) {
         StitchGhostCard(modifier = Modifier.fillMaxWidth()) {
             Column(Modifier.padding(14.dp)) {
-                Text("CSV Preview", fontWeight = FontWeight.SemiBold)
+                Text(stringApp(R.string.export_csv_preview), fontWeight = FontWeight.SemiBold)
                 Spacer(Modifier.height(8.dp))
                 Text(exportText, style = MaterialTheme.typography.bodySmall)
             }
@@ -52,11 +52,11 @@ fun ExportDataScreen(onBack: () -> Unit) {
             },
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text("Copy CSV to Clipboard")
+            Text(stringApp(R.string.export_copy_csv))
         }
         if (exported) {
             Text(
-                "Copied. You can paste into a .csv file.",
+                stringApp(R.string.admin_export_copied),
                 color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(top = 8.dp),

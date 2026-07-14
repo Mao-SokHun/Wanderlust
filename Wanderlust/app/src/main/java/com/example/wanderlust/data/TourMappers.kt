@@ -6,7 +6,16 @@ import com.example.wanderlust.data.model.Tour
 fun Tour.toDestinationCard(): DestinationCard {
     val catalog = DestinationCatalog.findByTitle(title)
     if (catalog != null) {
-        return catalog.copy(id = id, description = description.ifBlank { catalog.description })
+        return catalog.copy(
+            id = id,
+            description = description.ifBlank { catalog.description },
+            rating = rating,
+            ratingCount = ratingCount,
+            listingType = listingType,
+            priceUsd = priceUsd,
+            distanceKm = distanceKm,
+            businessName = businessName,
+        )
     }
     if (id.startsWith("custom-")) {
         return DestinationCard(
@@ -20,19 +29,52 @@ fun Tour.toDestinationCard(): DestinationCard {
             categoryKh = category,
             description = description,
             isCustomPlace = true,
+            ratingCount = ratingCount,
+            listingType = listingType,
         )
+    }
+    val loc = location.ifBlank {
+        serviceArea.ifBlank {
+            businessName?.takeIf { it.isNotBlank() }?.let { "$it • Cambodia" }
+                ?: "Cambodia • $category"
+        }
+    }
+    val price = priceLabel.ifBlank {
+        when {
+            priceUsd != null && listingType == "VEHICLE" ->
+                "$${priceUsd.toInt()} / ${rateUnit.ifBlank { "day" }}"
+            priceUsd != null -> "$${priceUsd.toInt()}"
+            businessName != null -> businessName
+            else -> if (listingType == "VEHICLE") "Transport" else "Tour"
+        }
     }
     return DestinationCard(
         id = id,
         title = title,
-        location = "Cambodia • $category",
-        locationKh = "កម្ពុជា • ${CambodiaLabels.categoryKh(category)}",
+        location = loc,
+        locationKh = loc,
         rating = rating,
-        priceLabel = "Suggested",
-        imageUrl = WanderlustImages.imageForTour(title, category, id),
+        ratingCount = ratingCount,
+        priceLabel = price,
+        duration = duration.ifBlank {
+            listOfNotNull(
+                vehicleType.takeIf { it.isNotBlank() },
+                seats?.let { "$it seats" },
+            ).joinToString(" · ")
+        },
+        imageUrl = imageUrl.ifBlank { WanderlustImages.imageForTour(title, category, id) },
         category = category,
         categoryKh = CambodiaLabels.categoryKh(category),
         description = description,
+        latitude = latitude,
+        longitude = longitude,
+        listingType = listingType,
+        vehicleType = vehicleType,
+        seats = seats,
+        rateUnit = rateUnit,
+        priceUsd = priceUsd,
+        distanceKm = distanceKm,
+        businessName = businessName,
     )
 }
 

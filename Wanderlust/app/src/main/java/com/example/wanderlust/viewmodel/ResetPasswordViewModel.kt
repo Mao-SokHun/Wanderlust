@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.wanderlust.data.repository.AuthRepository
+import com.example.wanderlust.util.Validation
 import kotlinx.coroutines.launch
 
 data class ResetPasswordUiState(
@@ -29,26 +30,39 @@ class ResetPasswordViewModel(
     )
         private set
 
-    fun onEmailChange(value: String) = update { copy(email = value, errorMessage = null) }
-    fun onTokenChange(value: String) = update { copy(token = value, errorMessage = null) }
-    fun onNewPasswordChange(value: String) = update { copy(newPassword = value, errorMessage = null) }
-    fun onConfirmPasswordChange(value: String) = update { copy(confirmPassword = value, errorMessage = null) }
+    fun onEmailChange(value: String) =
+        update { copy(email = value.take(Validation.EMAIL_MAX), errorMessage = null) }
+
+    fun onTokenChange(value: String) =
+        update { copy(token = value.take(32), errorMessage = null) }
+
+    fun onNewPasswordChange(value: String) =
+        update { copy(newPassword = value.take(Validation.PASSWORD_MAX), errorMessage = null) }
+
+    fun onConfirmPasswordChange(value: String) =
+        update { copy(confirmPassword = value.take(Validation.PASSWORD_MAX), errorMessage = null) }
 
     fun resetPassword() {
         val s = uiState
-        when {
-            s.email.isBlank() || s.token.isBlank() || s.newPassword.isBlank() ->
-                update { copy(errorMessage = "Please fill all fields") }
-            s.newPassword.length < 6 ->
-                update { copy(errorMessage = "Password must be at least 6 characters") }
-            s.newPassword != s.confirmPassword ->
-                update { copy(errorMessage = "Passwords do not match") }
-            else -> viewModelScope.launch {
-                update { copy(isLoading = true, errorMessage = null, success = false) }
-                repository.resetPassword(s.email, s.token, s.newPassword)
-                    .onSuccess { update { copy(isLoading = false, success = true) } }
-                    .onFailure { e -> update { copy(isLoading = false, errorMessage = e.message ?: "Reset failed") } }
-            }
+        val error = Validation.requireEmail(s.email)
+            ?: Validation.requireResetToken(s.token)
+            ?: Validation.requirePassword(s.newPassword, "New password", "ពាក្យសម្ងាត់ថ្មី")
+            ?: Validation.passwordsMatch(s.newPassword, s.confirmPassword)
+        if (error != null) {
+            update { copy(errorMessage = error) }
+            return
+        }
+        viewModelScope.launch {
+            update { copy(isLoading = true, errorMessage = null, success = false) }
+            repository.resetPassword(
+                Validation.normalizeEmail(s.email),
+                s.token.trim().uppercase(),
+                s.newPassword,
+            )
+                .onSuccess { update { copy(isLoading = false, success = true) } }
+                .onFailure { e ->
+                    update { copy(isLoading = false, errorMessage = e.message ?: "Reset failed") }
+                }
         }
     }
 

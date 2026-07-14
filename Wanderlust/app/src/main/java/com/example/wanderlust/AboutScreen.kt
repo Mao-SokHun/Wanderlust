@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import com.example.wanderlust.locale.stringApp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -29,7 +30,7 @@ import com.example.wanderlust.ui.components.WanderlustLogoStyle
 fun AboutScreen(onBack: () -> Unit) {
     val context = LocalContext.current
     StickyScrollScreen(
-        title = stringResource(R.string.about_title),
+        title = stringApp(R.string.about_title),
         onBack = onBack,
     ) {
         Column(
@@ -39,13 +40,13 @@ fun AboutScreen(onBack: () -> Unit) {
             WanderlustLogo(size = 72.dp, style = WanderlustLogoStyle.Badge)
             Spacer(Modifier.height(12.dp))
             Text(
-                stringResource(R.string.app_name),
+                stringApp(R.string.app_name),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
             )
             Text(
-                stringResource(R.string.about_version, "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"),
+                stringApp(R.string.about_version, "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -63,7 +64,7 @@ fun AboutScreen(onBack: () -> Unit) {
                     }
                 },
             ) {
-                Text(stringResource(R.string.about_get_on_devices))
+                Text(stringApp(R.string.about_get_on_devices))
             }
         }
 
@@ -72,7 +73,7 @@ fun AboutScreen(onBack: () -> Unit) {
         StitchGhostCard(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp)) {
                 Text(
-                    stringResource(R.string.about_tagline),
+                    stringApp(R.string.about_tagline),
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Center,
@@ -80,7 +81,7 @@ fun AboutScreen(onBack: () -> Unit) {
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    stringResource(R.string.about_description),
+                    stringApp(R.string.about_description),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -90,7 +91,7 @@ fun AboutScreen(onBack: () -> Unit) {
         Spacer(Modifier.height(12.dp))
 
         Text(
-            stringResource(R.string.about_credit),
+            stringApp(R.string.about_credit),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.fillMaxWidth(),

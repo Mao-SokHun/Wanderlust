@@ -1,6 +1,8 @@
 package com.example.wanderlust
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,6 +13,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -20,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.example.wanderlust.locale.stringApp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -51,7 +55,7 @@ fun RegisterScreen(
             .padding(24.dp),
     ) {
         Text(
-            text = stringResource(R.string.register_title),
+            text = stringApp(R.string.register_title),
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
@@ -65,15 +69,89 @@ fun RegisterScreen(
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Text(
+            stringLocalized(R.string.register_account_type, R.string.register_account_type_kh),
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.SemiBold,
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            FilterChip(
+                selected = state.role == "USER",
+                onClick = { viewModel.onRoleChange("USER") },
+                label = {
+                    Text(stringLocalized(R.string.register_as_traveler, R.string.register_as_traveler_kh))
+                },
+            )
+            FilterChip(
+                selected = state.role == "BUSINESS",
+                onClick = { viewModel.onRoleChange("BUSINESS") },
+                label = {
+                    Text(stringLocalized(R.string.register_as_business, R.string.register_as_business_kh))
+                },
+            )
+        }
+        if (state.role == "BUSINESS") {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                stringLocalized(R.string.register_business_hint, R.string.register_business_hint_kh),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                FilterChip(
+                    selected = state.businessSubtype == "TOURS",
+                    onClick = { viewModel.onBusinessSubtypeChange("TOURS") },
+                    label = {
+                        Text(stringLocalized(R.string.register_biz_tours, R.string.register_biz_tours_kh))
+                    },
+                )
+                FilterChip(
+                    selected = state.businessSubtype == "TRANSPORT",
+                    onClick = { viewModel.onBusinessSubtypeChange("TRANSPORT") },
+                    label = {
+                        Text(
+                            stringLocalized(
+                                R.string.register_biz_transport,
+                                R.string.register_biz_transport_kh,
+                            ),
+                        )
+                    },
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
             value = state.name,
             onValueChange = viewModel::onNameChange,
-            label = { Text(stringResource(R.string.label_name)) },
+            label = { Text(stringApp(R.string.label_name)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
         )
+
+        if (state.role == "BUSINESS") {
+            Spacer(modifier = Modifier.height(12.dp))
+            OutlinedTextField(
+                value = state.companyName,
+                onValueChange = viewModel::onCompanyNameChange,
+                label = {
+                    Text(stringLocalized(R.string.register_company_name, R.string.register_company_name_kh))
+                },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+            )
+        }
 
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -84,7 +162,7 @@ fun RegisterScreen(
         OutlinedTextField(
             value = state.email,
             onValueChange = viewModel::onEmailChange,
-            label = { Text(stringResource(R.string.label_email)) },
+            label = { Text(stringApp(R.string.label_email)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             isError = state.isEmailDuplicate,
@@ -100,7 +178,7 @@ fun RegisterScreen(
         OutlinedTextField(
             value = state.password,
             onValueChange = viewModel::onPasswordChange,
-            label = { Text(stringResource(R.string.label_password)) },
+            label = { Text(stringApp(R.string.label_password)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
@@ -125,21 +203,21 @@ fun RegisterScreen(
             if (state.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.height(24.dp))
             } else {
-                Text(stringResource(R.string.btn_create_account))
+                Text(stringApp(R.string.btn_create_account))
             }
         }
 
         Spacer(modifier = Modifier.height(12.dp))
 
         TextButton(onClick = onSignIn, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.register_sign_in_prompt))
+            Text(stringApp(R.string.register_sign_in_prompt))
         }
 
         OutlinedButton(
             onClick = onBack,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text(stringResource(R.string.btn_back))
+            Text(stringApp(R.string.btn_back))
         }
     }
 }

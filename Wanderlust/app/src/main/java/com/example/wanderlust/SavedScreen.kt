@@ -20,6 +20,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.example.wanderlust.locale.stringApp
 import androidx.compose.ui.unit.dp
 import com.example.wanderlust.data.DestinationCard
 import com.example.wanderlust.data.SessionManager
@@ -78,7 +79,7 @@ fun SavedScreen(
                         .fillMaxWidth()
                         .padding(top = 10.dp),
                 ) {
-                    Text(stringResource(R.string.btn_add_your_place))
+                    Text(stringApp(R.string.btn_add_your_place))
                 }
                 HorizontalDivider(
                     modifier = Modifier.padding(top = 8.dp),
@@ -95,13 +96,13 @@ fun SavedScreen(
                 ) {
                     StitchGhostCard(Modifier.fillMaxWidth()) {
                         Column(Modifier.padding(16.dp)) {
-                            Text(stringResource(R.string.saved_empty))
+                            Text(stringApp(R.string.saved_empty))
                             Spacer(Modifier.height(8.dp))
                             Button(onClick = onAddPlace, modifier = Modifier.fillMaxWidth()) {
-                                Text(stringResource(R.string.btn_add_your_place))
+                                Text(stringApp(R.string.btn_add_your_place))
                             }
                             TextButton(onClick = viewModel::refresh) {
-                                Text(stringResource(R.string.btn_retry))
+                                Text(stringApp(R.string.btn_retry))
                             }
                         }
                     }

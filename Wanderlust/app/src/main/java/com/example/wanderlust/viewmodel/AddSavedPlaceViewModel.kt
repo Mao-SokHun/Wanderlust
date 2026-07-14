@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.wanderlust.data.DestinationCard
 import com.example.wanderlust.data.model.CustomPlaceInput
 import com.example.wanderlust.data.repository.FavoriteRepository
+import com.example.wanderlust.util.Validation
 import kotlinx.coroutines.launch
 
 data class AddSavedPlaceUiState(
@@ -29,26 +30,63 @@ class AddSavedPlaceViewModel(
     var uiState by mutableStateOf(AddSavedPlaceUiState())
         private set
 
-    fun onTitleChange(v: String) { uiState = uiState.copy(title = v, errorMessage = null) }
-    fun onLocationChange(v: String) { uiState = uiState.copy(location = v, errorMessage = null) }
-    fun onNotesChange(v: String) { uiState = uiState.copy(notes = v) }
-    fun onLatitudeChange(v: String) { uiState = uiState.copy(latitude = v) }
-    fun onLongitudeChange(v: String) { uiState = uiState.copy(longitude = v) }
-    fun onMapsLinkChange(v: String) { uiState = uiState.copy(mapsLink = v) }
+    fun onTitleChange(v: String) {
+        uiState = uiState.copy(title = v.take(Validation.TITLE_MAX), errorMessage = null)
+    }
+
+    fun onLocationChange(v: String) {
+        uiState = uiState.copy(location = v.take(Validation.LOCATION_MAX), errorMessage = null)
+    }
+
+    fun onNotesChange(v: String) {
+        uiState = uiState.copy(notes = v.take(Validation.DESCRIPTION_MAX))
+    }
+
+    fun onLatitudeChange(v: String) {
+        uiState = uiState.copy(latitude = v.filter { it.isDigit() || it == '.' || it == '-' })
+    }
+
+    fun onLongitudeChange(v: String) {
+        uiState = uiState.copy(longitude = v.filter { it.isDigit() || it == '.' || it == '-' })
+    }
+
+    fun onMapsLinkChange(v: String) {
+        uiState = uiState.copy(mapsLink = v.take(500))
+    }
 
     fun save() {
+        val titleErr = Validation.requirePlaceTitle(uiState.title)
+        val locErr = Validation.requireLocation(uiState.location)
+        if (titleErr != null || locErr != null) {
+            uiState = uiState.copy(errorMessage = titleErr ?: locErr)
+            return
+        }
+        val latRaw = uiState.latitude.trim()
+        val lngRaw = uiState.longitude.trim()
+        val lat = latRaw.toDoubleOrNull()
+        val lng = lngRaw.toDoubleOrNull()
+        if (latRaw.isNotEmpty() || lngRaw.isNotEmpty()) {
+            if (lat == null || lng == null || lat !in -90.0..90.0 || lng !in -180.0..180.0) {
+                uiState = uiState.copy(
+                    errorMessage = if (com.example.wanderlust.locale.AppLocale.isKhmer) {
+                        "រយៈទទឹង/រយៈបណ្តោយមិនត្រឹមត្រូវ"
+                    } else {
+                        "Latitude/longitude are invalid"
+                    },
+                )
+                return
+            }
+        }
         viewModelScope.launch {
             uiState = uiState.copy(isLoading = true, errorMessage = null)
-            val lat = uiState.latitude.trim().toDoubleOrNull()
-            val lng = uiState.longitude.trim().toDoubleOrNull()
             repository.addCustomPlace(
                 CustomPlaceInput(
-                    title = uiState.title,
-                    location = uiState.location,
-                    notes = uiState.notes,
+                    title = uiState.title.trim(),
+                    location = uiState.location.trim(),
+                    notes = uiState.notes.trim(),
                     latitude = lat,
                     longitude = lng,
-                    mapsLink = uiState.mapsLink,
+                    mapsLink = uiState.mapsLink.trim(),
                 ),
             )
                 .onSuccess { card ->

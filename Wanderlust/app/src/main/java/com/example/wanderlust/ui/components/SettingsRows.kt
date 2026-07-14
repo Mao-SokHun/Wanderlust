@@ -1,6 +1,7 @@
 package com.example.wanderlust.ui.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -17,8 +19,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import com.example.wanderlust.locale.stringApp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.wanderlust.R
+import com.example.wanderlust.locale.stringLocalized
 
 @Composable
 fun SettingsSectionTitle(title: String, modifier: Modifier = Modifier) {
@@ -85,7 +91,7 @@ fun SettingsToggleRow(
                 .padding(14.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Column(modifier = Modifier.weight(1f)) {
+            Column(modifier.weight(1f)) {
                 Text(title, fontWeight = FontWeight.SemiBold)
                 Text(
                     subtitle,
@@ -94,6 +100,41 @@ fun SettingsToggleRow(
                 )
             }
             Switch(checked = checked, onCheckedChange = onCheckedChange)
+        }
+    }
+}
+
+@Composable
+fun SettingsLanguageRow(
+    selectedIsKhmer: Boolean,
+    onSelectKhmer: () -> Unit,
+    onSelectEnglish: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    StitchGhostCard(modifier = modifier.fillMaxWidth().padding(bottom = 10.dp)) {
+        Column(Modifier.padding(14.dp)) {
+            Text(
+                stringLocalized(R.string.settings_language_title, R.string.settings_language_title_kh),
+                fontWeight = FontWeight.SemiBold,
+            )
+            Text(
+                stringLocalized(R.string.settings_language_subtitle, R.string.settings_language_subtitle_kh),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 2.dp, bottom = 10.dp),
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FilterChip(
+                    selected = selectedIsKhmer,
+                    onClick = onSelectKhmer,
+                    label = { Text(stringApp(R.string.language_khmer)) },
+                )
+                FilterChip(
+                    selected = !selectedIsKhmer,
+                    onClick = onSelectEnglish,
+                    label = { Text(stringApp(R.string.language_english)) },
+                )
+            }
         }
     }
 }

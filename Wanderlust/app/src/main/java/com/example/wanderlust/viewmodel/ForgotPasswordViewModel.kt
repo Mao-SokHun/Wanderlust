@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.wanderlust.data.repository.AuthRepository
+import com.example.wanderlust.util.Validation
 import kotlinx.coroutines.launch
 
 data class ForgotPasswordUiState(
@@ -24,13 +25,13 @@ class ForgotPasswordViewModel(
         private set
 
     fun onEmailChange(value: String) {
-        uiState = uiState.copy(email = value, errorMessage = null)
+        uiState = uiState.copy(email = value.take(Validation.EMAIL_MAX), errorMessage = null)
     }
 
     fun requestCode() {
-        val email = uiState.email.trim()
-        if (email.isBlank()) {
-            uiState = uiState.copy(errorMessage = "Please enter your email")
+        val email = Validation.normalizeEmail(uiState.email)
+        Validation.requireEmail(email)?.let {
+            uiState = uiState.copy(errorMessage = it)
             return
         }
         viewModelScope.launch {

@@ -14,15 +14,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.example.wanderlust.locale.stringApp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.wanderlust.BuildConfig
 import com.example.wanderlust.data.SessionManager
 import com.example.wanderlust.locale.stringLocalized
+import com.example.wanderlust.ui.components.SettingsLanguageRow
 import com.example.wanderlust.ui.components.SettingsNavRow
 import com.example.wanderlust.ui.components.SettingsSectionTitle
 import com.example.wanderlust.ui.components.SettingsToggleRow
 import com.example.wanderlust.ui.components.StickyScrollScreen
+import com.example.wanderlust.locale.AppLocale
 import com.example.wanderlust.viewmodel.SettingsViewModel
 
 @Composable
@@ -37,6 +40,9 @@ fun SettingsScreen(
 ) {
     val state = viewModel.uiState
     val loggedIn = SessionManager.isLoggedIn()
+    // Observe locale so this screen (and callers keying off it) recompose.
+    val lang = AppLocale.code
+    val isKhmer = lang != AppLocale.EN
 
     StickyScrollScreen(
         title = stringLocalized(R.string.profile_settings, R.string.profile_settings_kh),
@@ -56,7 +62,18 @@ fun SettingsScreen(
             Spacer(Modifier.height(8.dp))
         }
 
-        SettingsSectionTitle(stringResource(R.string.settings_section_preferences))
+        SettingsSectionTitle(stringLocalized(R.string.settings_section_preferences, R.string.settings_section_preferences_kh))
+        SettingsLanguageRow(
+            selectedIsKhmer = isKhmer,
+            onSelectKhmer = {
+                SessionManager.setLanguage("km")
+                if (loggedIn) viewModel.saveLanguage("km")
+            },
+            onSelectEnglish = {
+                SessionManager.setLanguage("en")
+                if (loggedIn) viewModel.saveLanguage("en")
+            },
+        )
         SettingsToggleRow(
             title = if (isDarkTheme) {
                 stringLocalized(R.string.theme_dark, R.string.theme_dark_kh)
@@ -91,26 +108,26 @@ fun SettingsScreen(
             )
         }
 
-        SettingsSectionTitle(stringResource(R.string.settings_section_legal))
+        SettingsSectionTitle(stringApp(R.string.settings_section_legal))
         SettingsNavRow(
             Icons.Default.Policy,
-            stringResource(R.string.privacy_policy_title),
-            "Data collection and usage",
+            stringApp(R.string.privacy_policy_title),
+            stringApp(R.string.settings_privacy_sub),
             onClick = onOpenPrivacy,
         )
         SettingsNavRow(
             Icons.Default.Description,
-            stringResource(R.string.terms_title),
-            "Terms of use",
+            stringApp(R.string.terms_title),
+            stringApp(R.string.settings_terms_sub),
             onClick = onOpenTerms,
             showDivider = false,
         )
 
-        SettingsSectionTitle(stringResource(R.string.settings_section_about))
+        SettingsSectionTitle(stringApp(R.string.settings_section_about))
         SettingsNavRow(
             Icons.Default.Info,
-            stringResource(R.string.about_title),
-            stringResource(R.string.about_version, "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"),
+            stringApp(R.string.about_title),
+            stringApp(R.string.about_version, "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"),
             onClick = onOpenAbout,
             showDivider = false,
         )

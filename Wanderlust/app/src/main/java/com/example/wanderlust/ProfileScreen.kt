@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Policy
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Storefront
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +34,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.example.wanderlust.locale.stringApp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.wanderlust.ui.components.ProfileAvatar
@@ -55,6 +57,7 @@ fun ProfileScreen(
     onOpenPrivacy: () -> Unit,
     onOpenTerms: () -> Unit,
     onOpenAbout: () -> Unit,
+    onOpenBusinessStudio: () -> Unit = {},
     onLogout: () -> Unit,
     onSignIn: () -> Unit,
     onRegister: () -> Unit,
@@ -79,6 +82,8 @@ fun ProfileScreen(
     val name = SessionManager.userName ?: "Explorer"
     val email = SessionManager.userEmail.orEmpty()
     val bio = SessionManager.userBio
+    val city = SessionManager.userCity
+    val phone = SessionManager.userPhone
     val scrollState = rememberScrollState()
 
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
@@ -98,10 +103,6 @@ fun ProfileScreen(
                     WanderlustBrand()
                     ThemeToggleButton(isDark = isDarkTheme, onToggle = onToggleTheme)
                 }
-                HorizontalDivider(
-                    modifier = Modifier.padding(top = 8.dp),
-                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
-                )
             }
             Column(
                 Modifier
@@ -118,7 +119,7 @@ fun ProfileScreen(
                     Column(Modifier.weight(1f).padding(start = 14.dp)) {
                         Text(name, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                         Text(
-                            stringResource(R.string.profile_tier),
+                            stringApp(R.string.profile_tier),
                             color = MaterialTheme.colorScheme.primary,
                             style = MaterialTheme.typography.labelLarge,
                             fontWeight = FontWeight.SemiBold,
@@ -128,6 +129,17 @@ fun ProfileScreen(
                                 email,
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(top = 2.dp),
+                            )
+                        }
+                        if (city.isNotBlank() || phone.isNotBlank()) {
+                            Text(
+                                listOfNotNull(
+                                    city.takeIf { it.isNotBlank() },
+                                    phone.takeIf { it.isNotBlank() },
+                                ).joinToString(" · "),
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.padding(top = 2.dp),
                             )
                         }
@@ -144,59 +156,67 @@ fun ProfileScreen(
         }
 
         Spacer(Modifier.height(20.dp))
-        SettingsSectionTitle(stringResource(R.string.profile_section_account))
+        SettingsSectionTitle(stringApp(R.string.profile_section_account))
         ProfileMenuRow(
             Icons.Default.Person,
-            stringResource(R.string.profile_edit),
-            stringResource(R.string.profile_edit_sub),
+            stringApp(R.string.profile_edit),
+            stringApp(R.string.profile_edit_sub),
             onOpenEditProfile,
         )
         ProfileMenuRow(
             Icons.Default.Lock,
-            stringResource(R.string.profile_change_password),
-            stringResource(R.string.profile_change_password_sub),
+            stringApp(R.string.profile_change_password),
+            stringApp(R.string.profile_change_password_sub),
             onOpenChangePassword,
         )
         ProfileMenuRow(
             Icons.Default.Bookmark,
-            stringResource(R.string.profile_bookings),
+            stringApp(R.string.profile_bookings),
             stringLocalized(R.string.profile_bookings_sub, R.string.profile_bookings_sub_kh),
             onOpenSavedPlans,
         )
+        if (SessionManager.userRole == "BUSINESS" || SessionManager.isAdmin()) {
+            ProfileMenuRow(
+                Icons.Default.Storefront,
+                stringLocalized(R.string.business_open_studio, R.string.business_open_studio_kh),
+                stringLocalized(R.string.business_studio_sub, R.string.business_studio_sub_kh),
+                onOpenBusinessStudio,
+            )
+        }
         ProfileMenuRow(
             Icons.Default.Settings,
-            stringResource(R.string.profile_settings),
-            stringLocalized(R.string.settings_section_preferences, R.string.settings_section_preferences),
+            stringApp(R.string.profile_settings),
+            stringApp(R.string.settings_section_preferences),
             onOpenSettings,
         )
 
-        SettingsSectionTitle(stringResource(R.string.profile_section_support))
+        SettingsSectionTitle(stringApp(R.string.profile_section_support))
         ProfileMenuRow(
             Icons.AutoMirrored.Filled.Help,
-            stringResource(R.string.profile_help),
-            "FAQs and contact",
+            stringApp(R.string.profile_help),
+            stringApp(R.string.profile_help_sub),
             onOpenHelp,
         )
 
-        SettingsSectionTitle(stringResource(R.string.profile_section_legal))
+        SettingsSectionTitle(stringApp(R.string.profile_section_legal))
         ProfileMenuRow(
             Icons.Default.Policy,
-            stringResource(R.string.privacy_policy_title),
-            "How we handle your data",
+            stringApp(R.string.privacy_policy_title),
+            stringApp(R.string.profile_privacy_sub),
             onOpenPrivacy,
         )
         ProfileMenuRow(
             Icons.Default.Description,
-            stringResource(R.string.terms_title),
-            "Rules for using Wanderlust",
+            stringApp(R.string.terms_title),
+            stringApp(R.string.profile_terms_sub),
             onOpenTerms,
         )
 
-        SettingsSectionTitle(stringResource(R.string.profile_section_app))
+        SettingsSectionTitle(stringApp(R.string.profile_section_app))
         ProfileMenuRow(
             Icons.Default.Info,
-            stringResource(R.string.about_title),
-            stringResource(R.string.about_tagline),
+            stringApp(R.string.about_title),
+            stringApp(R.string.about_tagline),
             onOpenAbout,
             showDivider = false,
         )
@@ -204,7 +224,7 @@ fun ProfileScreen(
         Spacer(Modifier.height(8.dp))
         TextButton(onClick = onLogout, modifier = Modifier.fillMaxWidth()) {
             Icon(Icons.AutoMirrored.Filled.Logout, null, modifier = Modifier.size(18.dp))
-            Text(stringResource(R.string.profile_logout), modifier = Modifier.padding(start = 8.dp))
+            Text(stringApp(R.string.profile_logout), modifier = Modifier.padding(start = 8.dp))
         }
             }
         }

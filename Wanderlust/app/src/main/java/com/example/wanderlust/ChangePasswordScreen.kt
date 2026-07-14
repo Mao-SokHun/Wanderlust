@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.example.wanderlust.locale.stringApp
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -29,17 +30,17 @@ fun ChangePasswordScreen(
     val state = viewModel.uiState
 
     StickyScrollScreen(
-        title = stringResource(R.string.change_password_title),
+        title = stringApp(R.string.change_password_title),
         onBack = onBack,
         bottomPadding = 24.dp,
     ) {
-        SettingsSectionTitle(stringResource(R.string.edit_profile_section_security))
+        SettingsSectionTitle(stringApp(R.string.edit_profile_section_security))
         StitchGhostCard(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp)) {
                 OutlinedTextField(
                     value = state.currentPassword,
                     onValueChange = viewModel::onCurrentChange,
-                    label = { Text(stringResource(R.string.label_current_password)) },
+                    label = { Text(stringApp(R.string.label_current_password)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
@@ -48,7 +49,7 @@ fun ChangePasswordScreen(
                 OutlinedTextField(
                     value = state.newPassword,
                     onValueChange = viewModel::onNewChange,
-                    label = { Text(stringResource(R.string.label_new_password)) },
+                    label = { Text(stringApp(R.string.label_new_password)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
@@ -57,7 +58,7 @@ fun ChangePasswordScreen(
                 OutlinedTextField(
                     value = state.confirmPassword,
                     onValueChange = viewModel::onConfirmChange,
-                    label = { Text(stringResource(R.string.label_confirm_password)) },
+                    label = { Text(stringApp(R.string.label_confirm_password)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
@@ -81,7 +82,7 @@ fun ChangePasswordScreen(
             if (state.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.height(24.dp))
             } else {
-                Text(stringResource(R.string.btn_change_password))
+                Text(stringApp(R.string.btn_change_password))
             }
         }
     }

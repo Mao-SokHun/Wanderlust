@@ -57,6 +57,15 @@ class SettingsViewModel(
         )
     }
 
+    fun saveLanguage(raw: String) {
+        SessionManager.setLanguage(raw)
+        persistPreferences(
+            SessionManager.currentProfileUpdateRequest().copy(
+                language = SessionManager.userLanguage,
+            ),
+        )
+    }
+
     fun saveTheme(themeDark: Boolean) {
         SessionManager.setThemeDark(themeDark)
         persistPreferences(

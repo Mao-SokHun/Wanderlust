@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.wanderlust.data.DestinationCatalog
 import com.example.wanderlust.data.model.Tour
 import com.example.wanderlust.data.repository.TourRepository
 import com.example.wanderlust.data.repository.TourRepositoryProvider
@@ -34,10 +35,14 @@ class ExploreViewModel(
     init {
         viewModelScope.launch {
             val cached = repository.getCachedTours()
-            if (cached.isNotEmpty()) {
+            val cambodiaHits = cached.count { DestinationCatalog.findByTitle(it.title) != null }
+            // Stale world-tour demos left in Room from older API seeds
+            if (cached.isNotEmpty() && cambodiaHits > 0) {
                 uiState = uiState.copy(tours = cached, isOfflineData = true)
+            } else if (cached.isNotEmpty() && cambodiaHits == 0) {
+                repository.clearCache()
             }
-            loadTours(showSpinner = cached.isEmpty())
+            loadTours(showSpinner = cached.isEmpty() || cambodiaHits == 0)
         }
     }
 
@@ -50,11 +55,12 @@ class ExploreViewModel(
 
     fun updateSearch(query: String) {
         uiState = uiState.copy(searchQuery = query)
+        searchDebounced()
     }
 
     fun selectCategory(category: String?) {
         uiState = uiState.copy(selectedCategory = category)
-        loadTours()
+        loadTours(showSpinner = false)
     }
 
     fun loadTours(showSpinner: Boolean = !loadedOnce) {

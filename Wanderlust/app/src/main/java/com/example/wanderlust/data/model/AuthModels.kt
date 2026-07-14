@@ -9,6 +9,9 @@ data class RegisterRequest(
     val name: String,
     val email: String,
     val password: String,
+    val role: String = "USER",
+    val companyName: String = "",
+    val businessSubtype: String = "TOURS",
 )
 
 data class AuthResponse(
@@ -17,6 +20,8 @@ data class AuthResponse(
     val name: String,
     val email: String,
     val role: String,
+    val companyName: String? = null,
+    val businessSubtype: String? = null,
 )
 
 data class ForgotPasswordRequest(val email: String)
@@ -46,7 +51,14 @@ data class UserProfile(
     val email: String,
     val role: String,
     val bio: String = "",
-    val language: String = "en",
+    val phone: String = "",
+    val city: String = "",
+    val gender: String = "",
+    val birthDate: String = "",
+    val nationality: String = "Cambodia",
+    val travelStyle: String = "",
+    val emergencyContact: String = "",
+    val language: String = "km",
     val themeDark: Boolean = false,
     val notificationsEnabled: Boolean = true,
     val locationEnabled: Boolean = true,
@@ -56,7 +68,14 @@ data class UserProfile(
 data class ProfileUpdateRequest(
     val name: String,
     val bio: String = "",
-    val language: String = "en",
+    val phone: String = "",
+    val city: String = "",
+    val gender: String = "",
+    val birthDate: String = "",
+    val nationality: String = "Cambodia",
+    val travelStyle: String = "",
+    val emergencyContact: String = "",
+    val language: String = "km",
     val themeDark: Boolean = false,
     val notificationsEnabled: Boolean = true,
     val locationEnabled: Boolean = true,

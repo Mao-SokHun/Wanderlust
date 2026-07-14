@@ -56,5 +56,9 @@ fun destinationsNear(
 fun formatDistanceKm(km: Double): String =
     if (km < 10) String.format("%.1f km", km) else String.format("%.0f km", km)
 
+/** Numeric part for localized distance labels (e.g. "1.2" or "15"). */
+fun formatDistanceKmValue(km: Double): String =
+    if (km < 10) String.format("%.1f", km) else String.format("%.0f", km)
+
 fun formatWalkMinutes(minutes: Int): String =
     if (minutes < 60) "~$minutes min walk" else "~${minutes / 60} h walk"

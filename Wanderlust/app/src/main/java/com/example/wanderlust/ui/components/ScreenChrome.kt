@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -120,16 +119,12 @@ fun StickyScrollScreen(
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.background)
                     .padding(horizontal = 16.dp)
-                    .padding(top = 4.dp, bottom = 8.dp),
+                    .padding(top = 4.dp, bottom = 10.dp),
             ) {
                 BackTopBar(
                     title = title,
                     onBack = onBack,
                     trailing = headerTrailing,
-                )
-                HorizontalDivider(
-                    modifier = Modifier.padding(top = 8.dp),
-                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f),
                 )
             }
             Column(
@@ -241,12 +236,15 @@ fun DestinationListCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
-                Spacer(Modifier.weight(1f))
-                Text(
-                    "★ ${destination.rating}",
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.SemiBold,
-                )
+                if (destination.priceLabel.isNotEmpty()) {
+                    Spacer(Modifier.weight(1f))
+                    Text(
+                        destination.priceLabel,
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
         }
     }

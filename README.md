@@ -1,7 +1,5 @@
 # Wanderlust — Cambodia Place Discovery App
 
-**ITE304k Android App — Final Project**
-
 Wanderlust helps users **discover and save places in Cambodia** (temples, beaches, mountains, cities, food). It is **not** a booking or payment app — inspiration and saved lists only.
 
 Design reference: `Wanderlust.pdf` in this folder.
@@ -357,9 +355,8 @@ npm run db:setup
 
 ---
 
-## Course info
+## App info
 
-- **Course:** ITE304k Android App Development  
 - **App ID:** `com.example.wanderlust`  
 - **Version:** 1.0 (`versionCode` 1)
 

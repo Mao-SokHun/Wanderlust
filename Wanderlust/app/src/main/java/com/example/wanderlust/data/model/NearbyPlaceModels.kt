@@ -74,7 +74,7 @@ object NearbyPlaceCategories {
         "gym", "laundry", "parking", "car_repair",
     )
 
-    val radiusOptionsMeters: List<Int> = listOf(500, 1000, 2000)
+    val radiusOptionsMeters: List<Int> = listOf(500, 1000, 2000, 5000, 10000)
 
     fun momentsForHour(hourOfDay: Int = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)): List<NearbyMoment> {
         val timed = when (hourOfDay) {

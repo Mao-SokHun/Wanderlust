@@ -1,6 +1,8 @@
 package com.example.wanderlust
 
 import android.os.Bundle
+import android.os.SystemClock
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -13,19 +15,24 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import com.example.wanderlust.data.GuestAccess
 import com.example.wanderlust.data.SessionManager
 import com.example.wanderlust.data.repository.AppUpdateAvailability
 import com.example.wanderlust.data.repository.AppUpdateRepository
+import com.example.wanderlust.locale.AppLocale
 import com.example.wanderlust.navigation.AppNavigator
 import com.example.wanderlust.navigation.AppScreen
+import com.example.wanderlust.navigation.BackNavResult
 import com.example.wanderlust.ui.components.AppUpdateDialog
 import com.example.wanderlust.ui.components.WanderlustNavTab
 import com.example.wanderlust.ui.theme.WanderlustTheme
+import androidx.compose.runtime.key
 
 class MainActivity : ComponentActivity() {
 
@@ -36,10 +43,10 @@ class MainActivity : ComponentActivity() {
             var isDarkTheme by remember { mutableStateOf(false) }
             val nav = remember { AppNavigator() }
             var mainTab by remember { mutableStateOf(WanderlustNavTab.Home) }
-            var exploreQuery by remember { mutableStateOf("") }
-            var exploreCategory by remember { mutableStateOf<String?>(null) }
             var savedRefreshKey by remember { mutableIntStateOf(0) }
             var pendingUpdate by remember { mutableStateOf<AppUpdateAvailability?>(null) }
+            var lastExitPromptAtMs by remember { mutableLongStateOf(0L) }
+            val context = LocalContext.current
 
             LaunchedEffect(Unit) {
                 isDarkTheme = SessionManager.userThemeDark
@@ -57,13 +64,39 @@ class MainActivity : ComponentActivity() {
                 mainTab = nav.mainTabOrDefault(mainTab)
             }
 
-            val canGoBack = nav.stack.size > 1
-            BackHandler(enabled = canGoBack) {
-                if (nav.pop()) {
-                    syncTabFromStack()
+            fun navigateBack() {
+                nav.popOr(
+                    when {
+                        SessionManager.isLoggedIn() -> AppScreen.Main(WanderlustNavTab.Home)
+                        nav.stack.any { it is AppScreen.Main } -> AppScreen.Main(WanderlustNavTab.Home)
+                        else -> AppScreen.Welcome
+                    },
+                )
+                syncTabFromStack()
+            }
+
+            BackHandler(enabled = true) {
+                val confirmPending =
+                    SystemClock.elapsedRealtime() - lastExitPromptAtMs < EXIT_CONFIRM_WINDOW_MS
+                when (nav.handleSystemBack(confirmExitPending = confirmPending)) {
+                    BackNavResult.Consumed -> {
+                        lastExitPromptAtMs = 0L
+                        syncTabFromStack()
+                    }
+                    BackNavResult.ConfirmExit -> {
+                        lastExitPromptAtMs = SystemClock.elapsedRealtime()
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.msg_press_back_again_exit),
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                    }
+                    BackNavResult.ExitApp -> finish()
                 }
             }
 
+            val appLanguage = AppLocale.code
+            key(appLanguage) {
             WanderlustTheme(darkTheme = isDarkTheme) {
                     Surface(
                         modifier = Modifier.fillMaxSize(),
@@ -122,19 +155,13 @@ class MainActivity : ComponentActivity() {
                                         mainTab = WanderlustNavTab.Home
                                         nav.resetTo(AppScreen.Main(WanderlustNavTab.Home))
                                     },
-                                    onBack = {
-                                        nav.pop()
-                                        syncTabFromStack()
-                                    },
+                                    onBack = { navigateBack() },
                                     onSignUp = { nav.push(AppScreen.Register) },
                                     onForgotPassword = { nav.push(AppScreen.ForgotPassword) },
                                 )
 
                                 AppScreen.ForgotPassword -> ForgotPasswordScreen(
-                                    onBack = {
-                                        nav.pop()
-                                        syncTabFromStack()
-                                    },
+                                    onBack = { navigateBack() },
                                     onResetPassword = { email, token ->
                                         nav.push(AppScreen.ResetPassword(email, token))
                                     },
@@ -143,18 +170,12 @@ class MainActivity : ComponentActivity() {
                                 is AppScreen.ResetPassword -> ResetPasswordScreen(
                                     initialEmail = current.email,
                                     initialToken = current.token,
-                                    onBack = {
-                                        nav.pop()
-                                        syncTabFromStack()
-                                    },
+                                    onBack = { navigateBack() },
                                     onSuccess = { nav.resetTo(AppScreen.Login) },
                                 )
 
                                 AppScreen.ChangePassword -> ChangePasswordScreen(
-                                    onBack = {
-                                        nav.pop()
-                                        syncTabFromStack()
-                                    },
+                                    onBack = { navigateBack() },
                                 )
 
                                 AppScreen.Register -> RegisterScreen(
@@ -163,10 +184,7 @@ class MainActivity : ComponentActivity() {
                                         mainTab = WanderlustNavTab.Home
                                         nav.resetTo(AppScreen.Main(WanderlustNavTab.Home))
                                     },
-                                    onBack = {
-                                        nav.pop()
-                                        syncTabFromStack()
-                                    },
+                                    onBack = { navigateBack() },
                                     onSignIn = {
                                         if (nav.current == AppScreen.Register) {
                                             nav.pop()
@@ -186,28 +204,16 @@ class MainActivity : ComponentActivity() {
                                     onDestinationClick = openDestination,
                                     onSignIn = openLogin,
                                     onRegister = openRegister,
-                                    exploreInitialQuery = exploreQuery,
-                                    exploreInitialCategory = exploreCategory,
                                     savedRefreshKey = savedRefreshKey,
-                                    onSearch = { query ->
-                                        exploreQuery = query
-                                        mainTab = WanderlustNavTab.Explore
-                                        nav.switchMainTab(WanderlustNavTab.Explore)
-                                    },
-                                    onViewAllDestinations = {
-                                        nav.push(AppScreen.AllDestinations(exploreCategory))
-                                    },
-                                    onCategoryExplore = { cat ->
-                                        exploreCategory = cat
-                                        mainTab = WanderlustNavTab.Explore
-                                        nav.switchMainTab(WanderlustNavTab.Explore)
-                                    },
                                     onOpenSavedPlans = { requireLogin { nav.push(AppScreen.MyTrips) } },
                                     onOpenSettings = { nav.push(AppScreen.Settings) },
                                     onOpenHelp = { nav.push(AppScreen.HelpCenter) },
                                     onOpenPrivacy = { nav.push(AppScreen.LegalDocument(com.example.wanderlust.LegalDocumentType.PrivacyPolicy)) },
                                     onOpenTerms = { nav.push(AppScreen.LegalDocument(com.example.wanderlust.LegalDocumentType.TermsOfService)) },
                                     onOpenAbout = { nav.push(AppScreen.About) },
+                                    onOpenBusinessStudio = {
+                                        requireLogin { nav.push(AppScreen.BusinessStudio) }
+                                    },
                                     onLogout = {
                                         SessionManager.clear()
                                         nav.resetTo(AppScreen.Welcome)
@@ -217,22 +223,26 @@ class MainActivity : ComponentActivity() {
                                     },
                                 )
 
-                                is AppScreen.AllDestinations -> AllDestinationsScreen(
-                                    initialCategory = current.category,
-                                    onBack = {
-                                        nav.pop()
-                                        syncTabFromStack()
+                                AppScreen.BusinessStudio -> BusinessStudioScreen(
+                                    onBack = { navigateBack() },
+                                    onNeedSubscribe = {
+                                        nav.push(AppScreen.BusinessSubscribe)
                                     },
-                                    onDestinationClick = openDestination,
-                                    onSignIn = openLogin,
+                                )
+
+                                AppScreen.BusinessSubscribe -> BusinessSubscribeScreen(
+                                    onBack = { navigateBack() },
+                                    onPaid = {
+                                        // Remount studio so subscription status refreshes.
+                                        if (nav.current is AppScreen.BusinessSubscribe) nav.pop()
+                                        if (nav.current is AppScreen.BusinessStudio) nav.pop()
+                                        nav.push(AppScreen.BusinessStudio)
+                                    },
                                 )
 
                                 is AppScreen.TourDetail -> TourDetailScreen(
                                     destination = current.destination,
-                                    onBack = {
-                                        nav.pop()
-                                        syncTabFromStack()
-                                    },
+                                    onBack = { navigateBack() },
                                     onSavePlace = {
                                         savedRefreshKey++
                                         mainTab = WanderlustNavTab.Saved
@@ -244,10 +254,7 @@ class MainActivity : ComponentActivity() {
                                 )
 
                                 AppScreen.MyTrips -> MyBookingsScreen(
-                                    onBack = {
-                                        nav.pop()
-                                        syncTabFromStack()
-                                    },
+                                    onBack = { navigateBack() },
                                     onOpenSaved = {
                                         mainTab = WanderlustNavTab.Saved
                                         nav.popToMain(WanderlustNavTab.Saved)
@@ -257,10 +264,7 @@ class MainActivity : ComponentActivity() {
                                 AppScreen.Admin -> AdminScreen(
                                     isDarkTheme = isDarkTheme,
                                     onToggleTheme = toggleTheme,
-                                    onBack = {
-                                        nav.pop()
-                                        syncTabFromStack()
-                                    },
+                                    onBack = { navigateBack() },
                                     onOpenBookings = { nav.push(AppScreen.MyTrips) },
                                     onExportData = { nav.push(AppScreen.ExportData) },
                                     onAddTour = { nav.push(AppScreen.AddTour) },
@@ -270,38 +274,23 @@ class MainActivity : ComponentActivity() {
                                 )
 
                                 AppScreen.AddTour -> AddTourScreen(
-                                    onBack = {
-                                        nav.pop()
-                                        syncTabFromStack()
-                                    },
+                                    onBack = { navigateBack() },
                                 )
 
                                 AppScreen.EditTour -> EditTourScreen(
-                                    onBack = {
-                                        nav.pop()
-                                        syncTabFromStack()
-                                    },
+                                    onBack = { navigateBack() },
                                 )
 
                                 AppScreen.ManageUsers -> ManageUsersScreen(
-                                    onBack = {
-                                        nav.pop()
-                                        syncTabFromStack()
-                                    },
+                                    onBack = { navigateBack() },
                                 )
 
                                 AppScreen.Analytics -> AnalyticsScreen(
-                                    onBack = {
-                                        nav.pop()
-                                        syncTabFromStack()
-                                    },
+                                    onBack = { navigateBack() },
                                 )
 
                                 AppScreen.EditProfile -> EditProfileScreen(
-                                    onBack = {
-                                        nav.pop()
-                                        syncTabFromStack()
-                                    },
+                                    onBack = { navigateBack() },
                                     onChangePassword = {
                                         nav.push(AppScreen.ChangePassword)
                                     },
@@ -317,32 +306,20 @@ class MainActivity : ComponentActivity() {
                                         nav.push(AppScreen.LegalDocument(com.example.wanderlust.LegalDocumentType.TermsOfService))
                                     },
                                     onOpenAbout = { nav.push(AppScreen.About) },
-                                    onBack = {
-                                        nav.pop()
-                                        syncTabFromStack()
-                                    },
+                                    onBack = { navigateBack() },
                                 )
 
                                 is AppScreen.LegalDocument -> LegalDocumentScreen(
                                     type = current.type,
-                                    onBack = {
-                                        nav.pop()
-                                        syncTabFromStack()
-                                    },
+                                    onBack = { navigateBack() },
                                 )
 
                                 AppScreen.About -> AboutScreen(
-                                    onBack = {
-                                        nav.pop()
-                                        syncTabFromStack()
-                                    },
+                                    onBack = { navigateBack() },
                                 )
 
                                 AppScreen.HelpCenter -> HelpCenterScreen(
-                                    onBack = {
-                                        nav.pop()
-                                        syncTabFromStack()
-                                    },
+                                    onBack = { navigateBack() },
                                     onGoHome = {
                                         mainTab = WanderlustNavTab.Home
                                         nav.popToMain(WanderlustNavTab.Home)
@@ -350,17 +327,11 @@ class MainActivity : ComponentActivity() {
                                 )
 
                                 AppScreen.ExportData -> ExportDataScreen(
-                                    onBack = {
-                                        nav.pop()
-                                        syncTabFromStack()
-                                    },
+                                    onBack = { navigateBack() },
                                 )
 
                                 AppScreen.AddSavedPlace -> AddSavedPlaceScreen(
-                                    onBack = {
-                                        nav.pop()
-                                        syncTabFromStack()
-                                    },
+                                    onBack = { navigateBack() },
                                     onSaved = { dest ->
                                         savedRefreshKey++
                                         nav.pop()
@@ -378,5 +349,10 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+            }
         }
+
+    companion object {
+        private const val EXIT_CONFIRM_WINDOW_MS = 2_000L
     }
+}

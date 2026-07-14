@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import com.example.wanderlust.locale.stringApp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -101,7 +102,7 @@ fun WelcomeScreen(
                 WelcomeBadge()
                 Spacer(Modifier.height(20.dp))
                 Text(
-                    "Adventure is calling,",
+                    stringApp(R.string.welcome_title),
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
@@ -109,7 +110,7 @@ fun WelcomeScreen(
                     color = MaterialTheme.colorScheme.onBackground,
                 )
                 Text(
-                    "where will you go?",
+                    stringApp(R.string.welcome_title_line2),
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
@@ -117,7 +118,7 @@ fun WelcomeScreen(
                     color = MaterialTheme.colorScheme.primary,
                 )
                 Text(
-                    stringResource(R.string.welcome_subtitle),
+                    stringApp(R.string.welcome_subtitle),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
@@ -150,7 +151,7 @@ fun WelcomeScreen(
                         elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp),
                     ) {
                         Text(
-                            stringResource(R.string.btn_get_started),
+                            stringApp(R.string.btn_get_started),
                             fontWeight = FontWeight.SemiBold,
                         )
                         Spacer(Modifier.width(6.dp))
@@ -199,13 +200,13 @@ fun WelcomeScreen(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            stringResource(R.string.already_have_account),
+                            stringApp(R.string.already_have_account),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         TextButton(onClick = onLogin) {
                             Text(
-                                stringResource(R.string.btn_login),
+                                stringApp(R.string.btn_login),
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.primary,
                             )
@@ -217,7 +218,7 @@ fun WelcomeScreen(
                         modifier = Modifier.align(Alignment.CenterHorizontally),
                     ) {
                         Text(
-                            stringResource(R.string.btn_register),
+                            stringApp(R.string.btn_register),
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Medium,
                         )
@@ -229,8 +230,8 @@ fun WelcomeScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly,
                     ) {
-                        TrustStat("50k+", stringResource(R.string.welcome_stat_explorers))
-                        TrustStat("4.9/5", stringResource(R.string.welcome_stat_rating))
+                        TrustStat("50k+", stringApp(R.string.welcome_stat_explorers))
+                        TrustStat("4.9/5", stringApp(R.string.welcome_stat_rating))
                     }
                     Spacer(Modifier.height(8.dp))
                 }
@@ -261,7 +262,7 @@ private fun WelcomeBadge() {
         )
         Spacer(Modifier.width(6.dp))
         Text(
-            stringResource(R.string.welcome_badge),
+            stringApp(R.string.welcome_badge),
             style = MaterialTheme.typography.labelSmall,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.primary,
@@ -277,7 +278,7 @@ private fun WelcomeOrDivider() {
     ) {
         HorizontalDivider(Modifier.weight(1f), color = MaterialTheme.colorScheme.outline.copy(alpha = 0.25f))
         Text(
-            stringResource(R.string.welcome_or_connect),
+            stringApp(R.string.welcome_or_connect),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 10.dp),

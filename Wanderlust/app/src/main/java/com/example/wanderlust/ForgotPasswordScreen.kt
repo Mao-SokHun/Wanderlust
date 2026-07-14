@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.example.wanderlust.locale.stringApp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -26,12 +27,12 @@ fun ForgotPasswordScreen(
     val state = viewModel.uiState
 
     StickyScrollScreen(
-        title = stringResource(R.string.forgot_password_title),
+        title = stringApp(R.string.forgot_password_title),
         onBack = onBack,
         bottomPadding = 24.dp,
     ) {
         Text(
-            stringResource(R.string.forgot_password_subtitle),
+            stringApp(R.string.forgot_password_subtitle),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -39,7 +40,7 @@ fun ForgotPasswordScreen(
         OutlinedTextField(
             value = state.email,
             onValueChange = viewModel::onEmailChange,
-            label = { Text(stringResource(R.string.label_email)) },
+            label = { Text(stringApp(R.string.label_email)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
         )
@@ -54,7 +55,7 @@ fun ForgotPasswordScreen(
         state.resetToken?.let { code ->
             Spacer(Modifier.height(8.dp))
             Text(
-                stringResource(R.string.forgot_password_code, code),
+                stringApp(R.string.forgot_password_code, code),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
             )
@@ -68,7 +69,7 @@ fun ForgotPasswordScreen(
             if (state.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.height(24.dp))
             } else {
-                Text(stringResource(R.string.btn_send_reset_code))
+                Text(stringApp(R.string.btn_send_reset_code))
             }
         }
         if (state.resetToken != null) {
@@ -77,7 +78,7 @@ fun ForgotPasswordScreen(
                 onClick = { onResetPassword(state.email.trim(), state.resetToken!!) },
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(stringResource(R.string.btn_enter_new_password))
+                Text(stringApp(R.string.btn_enter_new_password))
             }
         }
     }

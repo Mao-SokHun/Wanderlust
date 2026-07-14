@@ -24,6 +24,7 @@ class WanderlustApp : Application(), ImageLoaderFactory {
         super.onCreate()
         SessionManager.init(this)
         DbProvider.init(this)
+        ApiConnection.init(this)
         val mapsKey = BuildConfig.MAPS_API_KEY
         if (mapsKey.isNotBlank() && !com.google.android.libraries.places.api.Places.isInitialized()) {
             com.google.android.libraries.places.api.Places.initializeWithNewPlacesApiEnabled(this, mapsKey)

@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.wanderlust.data.repository.AuthRepository
+import com.example.wanderlust.util.Validation
 import kotlinx.coroutines.launch
 
 data class ChangePasswordUiState(
@@ -24,37 +25,42 @@ class ChangePasswordViewModel(
     var uiState by mutableStateOf(ChangePasswordUiState())
         private set
 
-    fun onCurrentChange(value: String) = update { copy(currentPassword = value, errorMessage = null) }
-    fun onNewChange(value: String) = update { copy(newPassword = value, errorMessage = null) }
-    fun onConfirmChange(value: String) = update { copy(confirmPassword = value, errorMessage = null) }
+    fun onCurrentChange(value: String) =
+        update { copy(currentPassword = value.take(Validation.PASSWORD_MAX), errorMessage = null) }
+
+    fun onNewChange(value: String) =
+        update { copy(newPassword = value.take(Validation.PASSWORD_MAX), errorMessage = null) }
+
+    fun onConfirmChange(value: String) =
+        update { copy(confirmPassword = value.take(Validation.PASSWORD_MAX), errorMessage = null) }
 
     fun changePassword() {
         val s = uiState
-        when {
-            s.currentPassword.isBlank() || s.newPassword.isBlank() ->
-                update { copy(errorMessage = "Please fill all fields") }
-            s.newPassword.length < 6 ->
-                update { copy(errorMessage = "New password must be at least 6 characters") }
-            s.newPassword != s.confirmPassword ->
-                update { copy(errorMessage = "Passwords do not match") }
-            else -> viewModelScope.launch {
-                update { copy(isLoading = true, errorMessage = null, successMessage = null) }
-                repository.changePassword(s.currentPassword, s.newPassword)
-                    .onSuccess { response ->
-                        update {
-                            copy(
-                                isLoading = false,
-                                successMessage = response.message,
-                                currentPassword = "",
-                                newPassword = "",
-                                confirmPassword = "",
-                            )
-                        }
+        val error = Validation.requirePassword(s.currentPassword, "Current password", "ពាក្យសម្ងាត់បច្ចុប្បន្ន")
+            ?: Validation.requirePassword(s.newPassword, "New password", "ពាក្យសម្ងាត់ថ្មី")
+            ?: Validation.requireDifferentPasswords(s.currentPassword, s.newPassword)
+            ?: Validation.passwordsMatch(s.newPassword, s.confirmPassword)
+        if (error != null) {
+            update { copy(errorMessage = error) }
+            return
+        }
+        viewModelScope.launch {
+            update { copy(isLoading = true, errorMessage = null, successMessage = null) }
+            repository.changePassword(s.currentPassword, s.newPassword)
+                .onSuccess { response ->
+                    update {
+                        copy(
+                            isLoading = false,
+                            successMessage = response.message,
+                            currentPassword = "",
+                            newPassword = "",
+                            confirmPassword = "",
+                        )
                     }
-                    .onFailure { e ->
-                        update { copy(isLoading = false, errorMessage = e.message ?: "Change failed") }
-                    }
-            }
+                }
+                .onFailure { e ->
+                    update { copy(isLoading = false, errorMessage = e.message ?: "Change failed") }
+                }
         }
     }
 

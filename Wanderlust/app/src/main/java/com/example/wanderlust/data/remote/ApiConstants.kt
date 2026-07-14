@@ -20,11 +20,13 @@ object ApiConstants {
      * 3. Wi‑Fi (same network as PC)
      */
     val CANDIDATE_BASE_URLS: List<String> = listOf(
-        // Production (Render) — any phone / any network
-        "https://wanderlust-api-dm3y.onrender.com/",
+        // Local first (fail fast if offline) — race still prefers first healthy;
+        // last successful URL is remembered across launches.
         "http://127.0.0.1:$PORT/",
         "http://10.0.2.2:$PORT/",
         "http://$WIFI_PC_IP:$PORT/",
         "http://$WIFI_PC_IP_ALT:$PORT/",
+        // Production (Render) — used on real phones / any network
+        "https://wanderlust-api-dm3y.onrender.com/",
     ).distinct()
 }

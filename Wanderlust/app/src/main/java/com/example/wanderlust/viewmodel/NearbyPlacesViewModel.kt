@@ -368,6 +368,6 @@ class NearbyPlacesViewModel(application: Application) : AndroidViewModel(applica
     }
 
     companion object {
-        private const val SEARCH_DEBOUNCE_MS = 400L
+        private const val SEARCH_DEBOUNCE_MS = 220L
     }
 }

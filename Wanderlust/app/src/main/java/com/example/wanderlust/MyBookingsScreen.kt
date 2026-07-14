@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.example.wanderlust.locale.stringApp
 import androidx.compose.ui.unit.dp
 import com.example.wanderlust.locale.stringLocalized
 import com.example.wanderlust.ui.components.StitchGhostCard
@@ -23,7 +24,7 @@ fun MyBookingsScreen(
     onOpenSaved: () -> Unit,
 ) {
     StickyScrollScreen(
-        title = stringResource(R.string.profile_bookings),
+        title = stringApp(R.string.profile_bookings),
         onBack = onBack,
     ) {
         Text(
@@ -39,7 +40,7 @@ fun MyBookingsScreen(
         ) {
             Column(Modifier.padding(16.dp)) {
                 Text(
-                    stringResource(R.string.saved_title),
+                    stringApp(R.string.saved_title),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary,
                 )

@@ -6,6 +6,20 @@ import androidx.compose.runtime.setValue
 import com.example.wanderlust.ui.components.WanderlustNavTab
 
 /**
+ * Result of handling the system Back key / gesture.
+ */
+sealed class BackNavResult {
+    /** Stack or tab changed — stay in the app. */
+    data object Consumed : BackNavResult()
+
+    /** Caller should finish the Activity (after double-press confirm if desired). */
+    data object ExitApp : BackNavResult()
+
+    /** Ask user to press back again to exit. */
+    data object ConfirmExit : BackNavResult()
+}
+
+/**
  * Back stack for [com.example.wanderlust.MainActivity].
  * Uses [mutableStateOf] so Compose + [androidx.activity.compose.BackHandler] recompose on push/pop.
  */
@@ -27,6 +41,13 @@ class AppNavigator(
         if (stack.size <= 1) return false
         stack = stack.dropLast(1)
         return true
+    }
+
+    /** Pop if possible; otherwise land on [fallback]. Always leaves a non-empty stack. */
+    fun popOr(fallback: AppScreen) {
+        if (!pop()) {
+            resetTo(fallback)
+        }
     }
 
     fun resetTo(screen: AppScreen) {
@@ -65,4 +86,55 @@ class AppNavigator(
         (current as? AppScreen.Main)?.tab
             ?: (stack.lastOrNull { it is AppScreen.Main } as? AppScreen.Main)?.tab
             ?: default
+
+    /**
+     * System / gesture Back. Nested [androidx.activity.compose.BackHandler]s
+     * (menu, profile overlays) still run first when enabled.
+     */
+    fun handleSystemBack(confirmExitPending: Boolean): BackNavResult {
+        return when (val screen = current) {
+            AppScreen.Splash -> BackNavResult.Consumed
+
+            is AppScreen.Main -> {
+                if (screen.tab != WanderlustNavTab.Home) {
+                    switchMainTab(WanderlustNavTab.Home)
+                    BackNavResult.Consumed
+                } else if (canPop) {
+                    pop()
+                    BackNavResult.Consumed
+                } else if (confirmExitPending) {
+                    BackNavResult.ExitApp
+                } else {
+                    BackNavResult.ConfirmExit
+                }
+            }
+
+            AppScreen.Welcome -> {
+                if (confirmExitPending) BackNavResult.ExitApp else BackNavResult.ConfirmExit
+            }
+
+            AppScreen.Login,
+            AppScreen.Register,
+            AppScreen.ForgotPassword,
+            is AppScreen.ResetPassword,
+            -> {
+                if (canPop) {
+                    pop()
+                } else {
+                    resetTo(AppScreen.Welcome)
+                }
+                BackNavResult.Consumed
+            }
+
+            else -> {
+                if (canPop) {
+                    pop()
+                    BackNavResult.Consumed
+                } else {
+                    resetTo(AppScreen.Main(WanderlustNavTab.Home))
+                    BackNavResult.Consumed
+                }
+            }
+        }
+    }
 }

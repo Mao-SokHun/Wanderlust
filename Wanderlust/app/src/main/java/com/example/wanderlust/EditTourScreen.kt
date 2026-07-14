@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.wanderlust.data.model.AdminTourRequest
 import com.example.wanderlust.data.model.Tour
+import com.example.wanderlust.locale.stringApp
 import com.example.wanderlust.ui.components.StitchGhostCard
 import com.example.wanderlust.ui.components.StickyScrollScreen
 import com.example.wanderlust.viewmodel.AdminToolsViewModel
@@ -41,13 +42,13 @@ fun EditTourScreen(
     LaunchedEffect(Unit) { viewModel.loadTours() }
 
     StickyScrollScreen(
-        title = "Edit Tour",
+        title = stringApp(R.string.admin_edit_tour_title),
         onBack = onBack,
     ) {
         if (state.tours.isEmpty()) {
-            Text("No tours loaded", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(stringApp(R.string.admin_tour_none), color = MaterialTheme.colorScheme.onSurfaceVariant)
         } else {
-            Text("Select Tour", fontWeight = FontWeight.SemiBold)
+            Text(stringApp(R.string.admin_tour_select), fontWeight = FontWeight.SemiBold)
             Spacer(Modifier.height(8.dp))
             state.tours.take(5).forEach { tour ->
                 StitchGhostCard(
@@ -72,13 +73,13 @@ fun EditTourScreen(
 
         selected?.let { tour ->
             Spacer(Modifier.height(8.dp))
-            OutlinedTextField(title, { title = it }, label = { Text("Title") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+            OutlinedTextField(title, { title = it }, label = { Text(stringApp(R.string.admin_tour_title)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
             Spacer(Modifier.height(8.dp))
-            OutlinedTextField(description, { description = it }, label = { Text("Description") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(description, { description = it }, label = { Text(stringApp(R.string.admin_tour_description)) }, modifier = Modifier.fillMaxWidth())
             Spacer(Modifier.height(8.dp))
-            OutlinedTextField(category, { category = it }, label = { Text("Category") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+            OutlinedTextField(category, { category = it }, label = { Text(stringApp(R.string.admin_tour_category)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
             Spacer(Modifier.height(8.dp))
-            OutlinedTextField(ratingText, { ratingText = it }, label = { Text("Rating (0-5)") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+            OutlinedTextField(ratingText, { ratingText = it }, label = { Text(stringApp(R.string.admin_tour_rating)) }, modifier = Modifier.fillMaxWidth(), singleLine = true)
             Spacer(Modifier.height(12.dp))
             Button(
                 onClick = {
@@ -95,7 +96,7 @@ fun EditTourScreen(
                 },
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("Update Tour")
+                Text(stringApp(R.string.admin_tour_update))
             }
         }
 

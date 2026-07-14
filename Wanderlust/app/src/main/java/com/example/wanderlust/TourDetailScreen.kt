@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import com.example.wanderlust.locale.stringApp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -133,11 +134,14 @@ private fun TourDetailContent(
 
     LaunchedEffect(destination.id) {
         viewModel.loadSavedState(destination.id, destination.title)
+        viewModel.initRating(destination)
     }
 
     val savedSnackText = stringLocalized(R.string.msg_saved, R.string.msg_saved_kh)
     val removedSnackText = stringLocalized(R.string.msg_removed, R.string.msg_removed_kh)
     val failedSnackText = stringLocalized(R.string.msg_save_failed, R.string.msg_save_failed_kh)
+    val rateThanks = stringLocalized(R.string.rate_tour_thanks, R.string.rate_tour_thanks_kh)
+    val rateSignIn = stringLocalized(R.string.rate_sign_in, R.string.rate_sign_in_kh)
 
     LaunchedEffect(viewModel.saveMessage) {
         val code = viewModel.saveMessage ?: return@LaunchedEffect
@@ -148,6 +152,17 @@ private fun TourDetailContent(
         }
         snackbar.showSnackbar(text)
         viewModel.clearSaveMessage()
+    }
+
+    LaunchedEffect(viewModel.rateMessage) {
+        val code = viewModel.rateMessage ?: return@LaunchedEffect
+        val text = when (code) {
+            "ok" -> rateThanks
+            "signin" -> rateSignIn
+            else -> failedSnackText
+        }
+        snackbar.showSnackbar(text)
+        viewModel.clearRateMessage()
     }
 
     LaunchedEffect(destination.id) {
@@ -197,7 +212,7 @@ private fun TourDetailContent(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Default.Star, null, tint = MaterialTheme.colorScheme.primaryContainer, modifier = Modifier.height(16.dp))
                         Text(
-                            " ${destination.rating} • ${destination.localizedLocation()}",
+                            " ${viewModel.displayRating} (${viewModel.displayRatingCount}) • ${destination.localizedLocation()}",
                             color = Color.White.copy(0.9f),
                             style = MaterialTheme.typography.bodySmall,
                         )
@@ -224,11 +239,70 @@ private fun TourDetailContent(
                     TourTag(stringLocalized(R.string.tag_guides, R.string.tag_guides_kh))
                     TourTag(stringLocalized(R.string.tag_small_group, R.string.tag_small_group_kh))
                     TourTag(destination.localizedCategory())
+                    if (destination.listingType == "VEHICLE") {
+                        TourTag(
+                            stringLocalized(
+                                R.string.tours_filter_vehicles,
+                                R.string.tours_filter_vehicles_kh,
+                            ),
+                        )
+                    }
                 }
                 Spacer(Modifier.height(10.dp))
+                if (destination.id.matches(Regex("^\\d+$"))) {
+                    StitchGhostCard(Modifier.fillMaxWidth()) {
+                        Column(
+                            Modifier.padding(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            Text(
+                                stringLocalized(R.string.rate_tour_title, R.string.rate_tour_title_kh),
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                (1..5).forEach { star ->
+                                    IconButton(onClick = { viewModel.selectStars(star) }) {
+                                        Icon(
+                                            Icons.Filled.Star,
+                                            contentDescription = "$star",
+                                            tint = if (star <= viewModel.myRating) {
+                                                MaterialTheme.colorScheme.primary
+                                            } else {
+                                                MaterialTheme.colorScheme.outline
+                                            },
+                                        )
+                                    }
+                                }
+                            }
+                            if (com.example.wanderlust.data.SessionManager.isLoggedIn()) {
+                                Button(
+                                    enabled = !viewModel.ratingBusy && viewModel.myRating > 0,
+                                    onClick = { viewModel.submitRating(destination.id) },
+                                ) {
+                                    Text(
+                                        stringLocalized(
+                                            R.string.rate_tour_submit,
+                                            R.string.rate_tour_submit_kh,
+                                        ),
+                                    )
+                                }
+                            } else {
+                                Button(onClick = onSignIn) {
+                                    Text(
+                                        stringLocalized(
+                                            R.string.rate_sign_in,
+                                            R.string.rate_sign_in_kh,
+                                        ),
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    Spacer(Modifier.height(10.dp))
+                }
                 StitchGhostCard(Modifier.fillMaxWidth()) {
                     Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                        Text(stringResource(R.string.map_location), fontWeight = FontWeight.SemiBold)
+                        Text(stringApp(R.string.map_location), fontWeight = FontWeight.SemiBold)
                         Text(location.name, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Text(
                             "${stringLocalized(R.string.weather_label, R.string.weather_label_kh)} ${viewModel.weatherText}",
@@ -290,7 +364,7 @@ private fun TourDetailContent(
                     modifier = Modifier.padding(top = 8.dp),
                 )
                 Spacer(Modifier.height(16.dp))
-                Text(stringResource(R.string.nearby_title), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+                Text(stringApp(R.string.nearby_title), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.height(8.dp))
                 nearby.forEach { item ->
                     val suggestion = item.destination

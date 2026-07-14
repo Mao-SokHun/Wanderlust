@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import com.example.wanderlust.locale.stringApp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -87,7 +88,7 @@ fun AdminScreen(
                     ThemeToggleButton(isDark = isDarkTheme, onToggle = onToggleTheme, modifier = Modifier.padding(start = 8.dp))
                     TextButton(onClick = onExportData) {
                         Text(
-                            "Export Data",
+                            stringApp(R.string.admin_export_data),
                             modifier = Modifier
                                 .clip(RoundedCornerShape(999.dp))
                                 .background(MaterialTheme.colorScheme.primaryContainer)
@@ -100,32 +101,32 @@ fun AdminScreen(
 
             Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    AdminStatCard(Modifier.weight(1f), Icons.Default.Explore, "+12%", "SUGGESTED PLACES", tours, MaterialTheme.colorScheme.tertiary)
-                    AdminStatCard(Modifier.weight(1f), Icons.Default.Public, "+5.4k", "GLOBAL USERS", users, MaterialTheme.colorScheme.primary)
+                    AdminStatCard(Modifier.weight(1f), Icons.Default.Explore, "+12%", stringApp(R.string.admin_suggested_places), tours, MaterialTheme.colorScheme.tertiary)
+                    AdminStatCard(Modifier.weight(1f), Icons.Default.Public, "+5.4k", stringApp(R.string.admin_global_users), users, MaterialTheme.colorScheme.primary)
                 }
                 Spacer(Modifier.height(12.dp))
                 SuggestionsOverviewCard()
                 Spacer(Modifier.height(12.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    QuickActionChip("Add Tour", Modifier.weight(1f), onAddTour)
-                    QuickActionChip("Edit Tour", Modifier.weight(1f), onEditTour)
+                    QuickActionChip(stringApp(R.string.admin_add_tour_chip), Modifier.weight(1f), onAddTour)
+                    QuickActionChip(stringApp(R.string.admin_edit_tour_chip), Modifier.weight(1f), onEditTour)
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(top = 8.dp)) {
-                    QuickActionChip("Manage Users", Modifier.weight(1f), onManageUsers)
-                    QuickActionChip("Analytics", Modifier.weight(1f), onOpenAnalytics)
+                    QuickActionChip(stringApp(R.string.admin_manage_users), Modifier.weight(1f), onManageUsers)
+                    QuickActionChip(stringApp(R.string.admin_analytics_chip), Modifier.weight(1f), onOpenAnalytics)
                 }
 
                 if (state.isLoading) CircularProgressIndicator(modifier = Modifier.padding(8.dp))
                 state.errorMessage?.let {
                     Text(it, color = MaterialTheme.colorScheme.error)
-                    TextButton(onClick = viewModel::loadStats) { Text(stringResource(R.string.btn_retry)) }
+                    TextButton(onClick = viewModel::loadStats) { Text(stringApp(R.string.btn_retry)) }
                 }
 
                 Spacer(Modifier.height(16.dp))
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("Recent Saves", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+                    Text(stringApp(R.string.admin_recent_saves), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
                     Text(
-                        "View All",
+                        stringApp(R.string.admin_view_all),
                         color = MaterialTheme.colorScheme.primary,
                         style = MaterialTheme.typography.labelLarge,
                         modifier = Modifier.clickable(onClick = onOpenBookings),
@@ -137,29 +138,29 @@ fun AdminScreen(
                 SavedPlaceRow(WanderlustImages.USER_LIAM, "Liam Sterling", "Mondulkiri", "★ 4.7", "Saved", MaterialTheme.colorScheme.tertiary)
 
                 Spacer(Modifier.height(16.dp))
-                Text("System Activity", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+                Text(stringApp(R.string.admin_system_activity), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
                 ActivityLine("New Tour Listing", "Admin added \"Icelandic Aurora Expedition\"", "2 mins ago", MaterialTheme.colorScheme.primary)
                 ActivityLine("User Verified", "Elena Rossi completed ID verification", "1 hour ago", MaterialTheme.colorScheme.tertiary)
                 ActivityLine("Catalog Update", "Added new Cambodia place suggestions", "4 hours ago", MaterialTheme.colorScheme.onSurfaceVariant)
 
                 Spacer(Modifier.height(16.dp))
-                Text("Experience Catalog Highlights", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+                Text(stringApp(R.string.admin_catalog_highlights), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
                 ExperienceCatalogCard(WanderlustImages.HERO_MOUNTAINS, "TRENDING", "Angkor Wat", "Most saved this week")
                 Spacer(Modifier.height(8.dp))
                 ExperienceCatalogCard(WanderlustImages.BEACH, "HIGH RATING", "Koh Rong", "Top coast suggestion")
 
                 Spacer(Modifier.height(16.dp))
                 Button(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
-                    Text(stringResource(R.string.btn_back))
+                    Text(stringApp(R.string.btn_back))
                 }
             }
         }
 
         WanderlustBottomNav(
             selected = WanderlustNavTab.Home,
-            modifier = Modifier.align(Alignment.BottomCenter),
+            modifier = Modifier.align(Alignment.BottomEnd),
             onHome = onBack,
-            onExplore = onBack,
+            onTours = onBack,
             onSaved = onBack,
             onProfile = onBack,
         )
@@ -193,9 +194,9 @@ private fun SuggestionsOverviewCard() {
     StitchGhostCard(modifier = Modifier.fillMaxWidth().height(120.dp)) {
         Box(Modifier.fillMaxSize().padding(14.dp)) {
             Column {
-                Text("FREE SUGGESTIONS", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(stringApp(R.string.admin_free_suggestions), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text("18 places ", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.tertiary, fontWeight = FontWeight.Bold)
-                Text("across Cambodia — no paid booking", style = MaterialTheme.typography.bodySmall)
+                Text(stringApp(R.string.admin_cambodia_hint), style = MaterialTheme.typography.bodySmall)
             }
             Row(
                 modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth(),

@@ -18,7 +18,7 @@ fun DestinationLazyList(
     destinations: List<DestinationCard>,
     onDestinationClick: (DestinationCard) -> Unit,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(bottom = 80.dp),
+    contentPadding: PaddingValues = PaddingValues(bottom = 110.dp),
     header: @Composable () -> Unit = {},
 ) {
     LazyColumn(

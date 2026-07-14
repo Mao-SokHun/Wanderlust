@@ -13,6 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.example.wanderlust.locale.stringApp
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.wanderlust.ui.components.StickyScrollScreen
@@ -38,14 +39,14 @@ fun ResetPasswordScreen(
     }
 
     StickyScrollScreen(
-        title = stringResource(R.string.reset_password_title),
+        title = stringApp(R.string.reset_password_title),
         onBack = onBack,
         bottomPadding = 24.dp,
     ) {
         OutlinedTextField(
             value = state.email,
             onValueChange = viewModel::onEmailChange,
-            label = { Text(stringResource(R.string.label_email)) },
+            label = { Text(stringApp(R.string.label_email)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
         )
@@ -53,7 +54,7 @@ fun ResetPasswordScreen(
         OutlinedTextField(
             value = state.token,
             onValueChange = viewModel::onTokenChange,
-            label = { Text(stringResource(R.string.label_reset_code)) },
+            label = { Text(stringApp(R.string.label_reset_code)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
         )
@@ -61,7 +62,7 @@ fun ResetPasswordScreen(
         OutlinedTextField(
             value = state.newPassword,
             onValueChange = viewModel::onNewPasswordChange,
-            label = { Text(stringResource(R.string.label_new_password)) },
+            label = { Text(stringApp(R.string.label_new_password)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
@@ -70,7 +71,7 @@ fun ResetPasswordScreen(
         OutlinedTextField(
             value = state.confirmPassword,
             onValueChange = viewModel::onConfirmPasswordChange,
-            label = { Text(stringResource(R.string.label_confirm_password)) },
+            label = { Text(stringApp(R.string.label_confirm_password)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
@@ -88,7 +89,7 @@ fun ResetPasswordScreen(
             if (state.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.height(24.dp))
             } else {
-                Text(stringResource(R.string.btn_reset_password))
+                Text(stringApp(R.string.btn_reset_password))
             }
         }
     }

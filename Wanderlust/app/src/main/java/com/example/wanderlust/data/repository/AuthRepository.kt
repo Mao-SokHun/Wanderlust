@@ -27,9 +27,25 @@ class AuthRepository {
             response
         }
 
-    suspend fun register(name: String, email: String, password: String): Result<AuthResponse> =
+    suspend fun register(
+        name: String,
+        email: String,
+        password: String,
+        role: String = "USER",
+        companyName: String = "",
+        businessSubtype: String = "TOURS",
+    ): Result<AuthResponse> =
         apiCall { api ->
-            val response = api.register(RegisterRequest(name, email.trim().lowercase(), password))
+            val response = api.register(
+                RegisterRequest(
+                    name = name,
+                    email = email.trim().lowercase(),
+                    password = password,
+                    role = role,
+                    companyName = companyName,
+                    businessSubtype = businessSubtype,
+                ),
+            )
             SessionManager.saveLogin(
                 token = response.token,
                 name = response.name,

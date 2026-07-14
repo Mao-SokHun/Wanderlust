@@ -15,11 +15,12 @@ sealed class AppScreen {
     data class ResetPassword(val email: String = "", val token: String = "") : AppScreen()
     data object ChangePassword : AppScreen()
 
-    /** Bottom tabs: Home / Explore / Saved / Profile */
+    /** Main tabs: Home / Tours / Saved / Profile */
     data class Main(val tab: WanderlustNavTab = WanderlustNavTab.Home) : AppScreen()
 
     data class TourDetail(val destination: DestinationCard) : AppScreen()
-    data class AllDestinations(val category: String? = null) : AppScreen()
+    data object BusinessStudio : AppScreen()
+    data object BusinessSubscribe : AppScreen()
     data object MyTrips : AppScreen()
     data object Admin : AppScreen()
     data object AddTour : AppScreen()

@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.example.wanderlust.locale.stringApp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -49,11 +50,11 @@ fun LoginRequiredPanel(
         )
         Spacer(Modifier.height(20.dp))
         Button(onClick = onSignIn, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.btn_login))
+            Text(stringApp(R.string.btn_login))
         }
         Spacer(Modifier.height(8.dp))
         OutlinedButton(onClick = onRegister, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.btn_register))
+            Text(stringApp(R.string.btn_register))
         }
     }
 }

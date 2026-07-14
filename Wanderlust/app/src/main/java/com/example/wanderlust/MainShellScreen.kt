@@ -18,7 +18,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.wanderlust.data.DestinationCard
 import com.example.wanderlust.ui.components.WanderlustBottomNav
 import com.example.wanderlust.ui.components.WanderlustNavTab
-import com.example.wanderlust.viewmodel.ExploreViewModel
 import com.example.wanderlust.viewmodel.FavoritesViewModel
 
 private sealed class ProfileOverlay {
@@ -33,23 +32,18 @@ fun MainShellScreen(
     isDarkTheme: Boolean,
     onToggleTheme: () -> Unit,
     onDestinationClick: (DestinationCard) -> Unit,
-    exploreInitialQuery: String = "",
-    exploreInitialCategory: String? = null,
     savedRefreshKey: Int = 0,
-    onSearch: (String) -> Unit,
-    onViewAllDestinations: () -> Unit = {},
-    onCategoryExplore: (String?) -> Unit = {},
     onOpenSavedPlans: () -> Unit,
     onOpenSettings: () -> Unit,
     onOpenHelp: () -> Unit,
     onOpenPrivacy: () -> Unit,
     onOpenTerms: () -> Unit,
     onOpenAbout: () -> Unit,
+    onOpenBusinessStudio: () -> Unit = {},
     onLogout: () -> Unit,
     onSignIn: () -> Unit,
     onRegister: () -> Unit,
     onAddSavedPlace: () -> Unit = {},
-    exploreViewModel: ExploreViewModel = viewModel(),
     favoritesViewModel: FavoritesViewModel = viewModel(),
 ) {
     var profileOverlay by remember { mutableStateOf<ProfileOverlay?>(null) }
@@ -82,18 +76,13 @@ fun MainShellScreen(
         when (selectedTab) {
             WanderlustNavTab.Home -> HomeScreen(
                 onDestinationClick = onDestinationClick,
-                onExploreAll = onViewAllDestinations,
-                onSearch = onSearch,
-                onCategoryExplore = onCategoryExplore,
                 onSignIn = onSignIn,
                 onPlaceSaved = { favoritesViewModel.refresh() },
             )
-            WanderlustNavTab.Explore -> ExploreScreen(
-                initialQuery = exploreInitialQuery,
-                initialCategory = exploreInitialCategory,
+            WanderlustNavTab.Tours -> ToursMarketplaceScreen(
                 onTourClick = onDestinationClick,
+                onOpenBusinessStudio = onOpenBusinessStudio,
                 onSignIn = onSignIn,
-                viewModel = exploreViewModel,
             )
             WanderlustNavTab.Saved -> SavedScreen(
                 onDestinationClick = onDestinationClick,
@@ -115,6 +104,7 @@ fun MainShellScreen(
                     onOpenPrivacy = onOpenPrivacy,
                     onOpenTerms = onOpenTerms,
                     onOpenAbout = onOpenAbout,
+                    onOpenBusinessStudio = onOpenBusinessStudio,
                     onLogout = onLogout,
                     onSignIn = onSignIn,
                     onRegister = onRegister,
@@ -124,9 +114,9 @@ fun MainShellScreen(
 
         WanderlustBottomNav(
             selected = selectedTab,
-            modifier = Modifier.align(Alignment.BottomCenter),
+            modifier = Modifier.align(Alignment.BottomEnd),
             onHome = { onTabChange(WanderlustNavTab.Home) },
-            onExplore = { onTabChange(WanderlustNavTab.Explore) },
+            onTours = { onTabChange(WanderlustNavTab.Tours) },
             onSaved = { onTabChange(WanderlustNavTab.Saved) },
             onProfile = { onTabChange(WanderlustNavTab.Profile) },
         )

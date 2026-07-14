@@ -22,7 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
+import com.example.wanderlust.locale.stringApp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -86,7 +86,7 @@ fun LegalDocumentScreen(
     }
 
     StickyScrollScreen(
-        title = stringResource(titleRes),
+        title = stringApp(titleRes),
         onBack = onBack,
     ) {
         StitchGhostCard(Modifier.fillMaxWidth()) {
@@ -104,20 +104,20 @@ fun LegalDocumentScreen(
                 )
                 Spacer(Modifier.height(10.dp))
                 Text(
-                    stringResource(titleRes),
+                    stringApp(titleRes),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
                 )
                 Spacer(Modifier.height(6.dp))
                 Text(
-                    stringResource(R.string.legal_last_updated),
+                    stringApp(R.string.legal_last_updated),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Spacer(Modifier.height(12.dp))
                 Text(
-                    stringResource(introRes),
+                    stringApp(introRes),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface,
                     lineHeight = 24.sp,
@@ -131,14 +131,14 @@ fun LegalDocumentScreen(
         StitchGhostCard(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(horizontal = 16.dp, vertical = 14.dp)) {
                 Text(
-                    stringResource(R.string.legal_section_summary),
+                    stringApp(R.string.legal_section_summary),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
                 )
                 Spacer(Modifier.height(10.dp))
                 highlightsRes.forEach { res ->
-                    LegalHighlightRow(stringResource(res))
+                    LegalHighlightRow(stringApp(res))
                     Spacer(Modifier.height(8.dp))
                 }
             }
@@ -149,8 +149,8 @@ fun LegalDocumentScreen(
             StitchGhostCard(Modifier.fillMaxWidth()) {
                 LegalSectionContent(
                     index = index + 1,
-                    title = stringResource(section.titleRes),
-                    body = stringResource(section.bodyRes),
+                    title = stringApp(section.titleRes),
+                    body = stringApp(section.bodyRes),
                 )
             }
         }
@@ -158,7 +158,7 @@ fun LegalDocumentScreen(
         Spacer(Modifier.height(16.dp))
         StitchGhostCard(Modifier.fillMaxWidth()) {
             Text(
-                stringResource(R.string.legal_footer_note),
+                stringApp(R.string.legal_footer_note),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 lineHeight = 22.sp,

@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.example.wanderlust.locale.stringApp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -53,7 +54,7 @@ fun LoginScreen(
             .padding(24.dp),
     ) {
         Text(
-            text = stringResource(R.string.login_title),
+            text = stringApp(R.string.login_title),
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
@@ -62,12 +63,12 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = stringResource(R.string.login_subtitle),
+            text = stringApp(R.string.login_subtitle),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Text(
-            text = stringResource(R.string.login_hint),
+            text = stringApp(R.string.login_hint),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(top = 4.dp),
@@ -77,7 +78,7 @@ fun LoginScreen(
             onClick = viewModel::fillTestUser,
             modifier = Modifier.padding(top = 6.dp),
         ) {
-            Text(stringResource(R.string.login_fill_test_user))
+            Text(stringApp(R.string.login_fill_test_user))
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -85,7 +86,7 @@ fun LoginScreen(
         OutlinedTextField(
             value = state.email,
             onValueChange = viewModel::onEmailChange,
-            label = { Text(stringResource(R.string.label_email)) },
+            label = { Text(stringApp(R.string.label_email)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
         )
@@ -95,7 +96,7 @@ fun LoginScreen(
         OutlinedTextField(
             value = state.password,
             onValueChange = viewModel::onPasswordChange,
-            label = { Text(stringResource(R.string.label_password)) },
+            label = { Text(stringApp(R.string.label_password)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
@@ -120,25 +121,25 @@ fun LoginScreen(
             if (state.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.height(24.dp))
             } else {
-                Text(stringResource(R.string.btn_login))
+                Text(stringApp(R.string.btn_login))
             }
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
         TextButton(onClick = onForgotPassword, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.forgot_password_link))
+            Text(stringApp(R.string.forgot_password_link))
         }
 
         TextButton(onClick = onSignUp, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.login_sign_up_prompt))
+            Text(stringApp(R.string.login_sign_up_prompt))
         }
 
         OutlinedButton(
             onClick = onBack,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text(stringResource(R.string.btn_back))
+            Text(stringApp(R.string.btn_back))
         }
     }
 }

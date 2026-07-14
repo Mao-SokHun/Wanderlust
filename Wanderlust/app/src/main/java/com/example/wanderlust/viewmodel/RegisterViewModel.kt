@@ -6,12 +6,16 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.wanderlust.data.repository.AuthRepository
+import com.example.wanderlust.util.Validation
 import kotlinx.coroutines.launch
 
 data class RegisterUiState(
     val name: String = "",
     val email: String = "",
     val password: String = "",
+    val role: String = "USER",
+    val businessSubtype: String = "TOURS",
+    val companyName: String = "",
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     val isEmailDuplicate: Boolean = false,
@@ -26,38 +30,66 @@ class RegisterViewModel(
         private set
 
     fun onNameChange(value: String) {
-        uiState = uiState.copy(name = value, errorMessage = null, isEmailDuplicate = false)
+        uiState = uiState.copy(
+            name = value.take(Validation.NAME_MAX),
+            errorMessage = null,
+            isEmailDuplicate = false,
+        )
     }
 
     fun onEmailChange(value: String) {
-        uiState = uiState.copy(email = value, errorMessage = null, isEmailDuplicate = false)
+        uiState = uiState.copy(
+            email = value.take(Validation.EMAIL_MAX),
+            errorMessage = null,
+            isEmailDuplicate = false,
+        )
     }
 
     fun onPasswordChange(value: String) {
-        uiState = uiState.copy(password = value, errorMessage = null, isEmailDuplicate = false)
+        uiState = uiState.copy(
+            password = value.take(Validation.PASSWORD_MAX),
+            errorMessage = null,
+            isEmailDuplicate = false,
+        )
+    }
+
+    fun onRoleChange(value: String) {
+        uiState = uiState.copy(
+            role = value,
+            errorMessage = null,
+            companyName = if (value == "BUSINESS") uiState.companyName else "",
+            businessSubtype = if (value == "BUSINESS") uiState.businessSubtype else "TOURS",
+        )
+    }
+
+    fun onBusinessSubtypeChange(value: String) {
+        uiState = uiState.copy(businessSubtype = value, errorMessage = null)
+    }
+
+    fun onCompanyNameChange(value: String) {
+        uiState = uiState.copy(
+            companyName = value.take(Validation.COMPANY_MAX),
+            errorMessage = null,
+        )
     }
 
     fun register() {
         val name = uiState.name.trim()
-        val email = uiState.email.trim().lowercase()
+        val email = Validation.normalizeEmail(uiState.email)
         val password = uiState.password
-        when {
-            name.isBlank() || email.isBlank() || password.isBlank() -> {
-                uiState = uiState.copy(errorMessage = "Please fill all fields")
-                return
-            }
-            name.length < 2 -> {
-                uiState = uiState.copy(errorMessage = "Name is too short")
-                return
-            }
-            !isValidEmail(email) -> {
-                uiState = uiState.copy(errorMessage = "Please enter a valid email")
-                return
-            }
-            password.length < 6 -> {
-                uiState = uiState.copy(errorMessage = "Password must be at least 6 characters")
-                return
-            }
+        val role = if (uiState.role == "BUSINESS") "BUSINESS" else "USER"
+        val companyName = uiState.companyName.trim()
+        val subtype =
+            if (role == "BUSINESS" && uiState.businessSubtype == "TRANSPORT") "TRANSPORT" else "TOURS"
+        Validation.validateRegister(
+            name = name,
+            email = email,
+            password = password,
+            isBusiness = role == "BUSINESS",
+            companyName = companyName,
+        )?.let {
+            uiState = uiState.copy(errorMessage = it)
+            return
         }
         viewModelScope.launch {
             uiState = uiState.copy(
@@ -70,6 +102,9 @@ class RegisterViewModel(
                 name = name,
                 email = email,
                 password = password,
+                role = role,
+                companyName = companyName,
+                businessSubtype = subtype,
             ).onSuccess {
                 uiState = uiState.copy(isLoading = false, registerSuccess = true)
             }.onFailure { error ->
@@ -86,9 +121,6 @@ class RegisterViewModel(
     fun resetSuccess() {
         uiState = uiState.copy(registerSuccess = false)
     }
-
-    private fun isValidEmail(value: String): Boolean =
-        android.util.Patterns.EMAIL_ADDRESS.matcher(value).matches()
 
     private fun isDuplicateEmailError(message: String?): Boolean {
         val msg = message.orEmpty().lowercase()

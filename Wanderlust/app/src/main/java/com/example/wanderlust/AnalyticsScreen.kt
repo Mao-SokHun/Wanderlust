@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.wanderlust.locale.stringApp
 import com.example.wanderlust.ui.components.StitchGhostCard
 import com.example.wanderlust.ui.components.StickyScrollScreen
 import com.example.wanderlust.viewmodel.AdminToolsViewModel
@@ -33,7 +34,7 @@ fun AnalyticsScreen(
     val analytics = state.analytics
 
     StickyScrollScreen(
-        title = "Analytics",
+        title = stringApp(R.string.analytics_title),
         onBack = onBack,
     ) {
         when {
@@ -41,26 +42,25 @@ fun AnalyticsScreen(
                 Text(state.errorMessage!!, color = MaterialTheme.colorScheme.error)
             }
             analytics == null -> {
-                Text("Loading analytics...", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(stringApp(R.string.analytics_loading), color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             else -> {
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    MetricCard("Tours", analytics.tours.toString(), Modifier.weight(1f))
-                    MetricCard("Users", analytics.users.toString(), Modifier.weight(1f))
+                    MetricCard(stringApp(R.string.analytics_metric_tours), analytics.tours.toString(), Modifier.weight(1f))
+                    MetricCard(stringApp(R.string.analytics_metric_users), analytics.users.toString(), Modifier.weight(1f))
                 }
                 Spacer(Modifier.height(10.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    MetricCard("Avg Rating", analytics.averageRating.toString(), Modifier.weight(1f))
-                    MetricCard("Top Category", analytics.topCategory, Modifier.weight(1f))
+                    MetricCard(stringApp(R.string.analytics_metric_avg_rating), analytics.averageRating.toString(), Modifier.weight(1f))
+                    MetricCard(stringApp(R.string.analytics_metric_top_category), analytics.topCategory, Modifier.weight(1f))
                 }
 
                 Spacer(Modifier.height(16.dp))
-                Text("Quick Insight", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+                Text(stringApp(R.string.analytics_quick_insight), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
                 StitchGhostCard(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
                     Column(Modifier.padding(12.dp)) {
                         Text(
-                            "Current strongest demand: ${analytics.topCategory}. " +
-                                "Keep promoting high-rated experiences to increase conversion.",
+                            stringApp(R.string.analytics_insight_body, analytics.topCategory),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         Spacer(Modifier.height(10.dp))

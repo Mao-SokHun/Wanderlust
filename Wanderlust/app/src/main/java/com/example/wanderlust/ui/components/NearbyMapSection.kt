@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import com.example.wanderlust.locale.stringApp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -119,7 +120,7 @@ fun NearbyMapSection(
             !locationEnabled -> {
                 StitchGhostCard(Modifier.fillMaxWidth()) {
                     Text(
-                        stringResource(R.string.nearby_disabled_settings),
+                        stringApp(R.string.nearby_disabled_settings),
                         Modifier.padding(12.dp),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -132,7 +133,7 @@ fun NearbyMapSection(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         Text(
-                            stringResource(R.string.nearby_need_permission),
+                            stringApp(R.string.nearby_need_permission),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         Button(
@@ -145,7 +146,7 @@ fun NearbyMapSection(
                                 )
                             },
                         ) {
-                            Text(stringResource(R.string.nearby_enable_location))
+                            Text(stringApp(R.string.nearby_enable_location))
                         }
                     }
                 }
@@ -161,7 +162,7 @@ fun NearbyMapSection(
                     CircularProgressIndicator()
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        stringResource(R.string.nearby_finding),
+                        stringApp(R.string.nearby_finding),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
@@ -234,7 +235,7 @@ private fun NearbyMapContent(
     ) {
         Marker(
             state = youMarkerState,
-            title = stringResource(R.string.nearby_you_marker),
+            title = stringApp(R.string.nearby_you_marker),
         )
         nearby.forEach { item ->
             key(item.destination.id) {

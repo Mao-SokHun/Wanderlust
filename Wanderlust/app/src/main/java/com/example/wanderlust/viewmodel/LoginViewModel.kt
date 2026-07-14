@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.wanderlust.BuildConfig
 import com.example.wanderlust.data.repository.AuthRepository
+import com.example.wanderlust.util.Validation
 import kotlinx.coroutines.launch
 
 data class LoginUiState(
@@ -25,33 +26,23 @@ class LoginViewModel(
         private set
 
     fun onEmailChange(value: String) {
-        uiState = uiState.copy(email = value, errorMessage = null)
+        uiState = uiState.copy(email = value.take(Validation.EMAIL_MAX), errorMessage = null)
     }
 
     fun onPasswordChange(value: String) {
-        uiState = uiState.copy(password = value, errorMessage = null)
+        uiState = uiState.copy(password = value.take(Validation.PASSWORD_MAX), errorMessage = null)
     }
 
     fun login() {
         val email = uiState.email.trim()
         val password = uiState.password
-        when {
-            email.isBlank() || password.isBlank() -> {
-                uiState = uiState.copy(errorMessage = "Please enter email and password")
-                return
-            }
-            !isValidEmail(email) -> {
-                uiState = uiState.copy(errorMessage = "Please enter a valid email")
-                return
-            }
-            password.length < 6 -> {
-                uiState = uiState.copy(errorMessage = "Password must be at least 6 characters")
-                return
-            }
+        Validation.validateLogin(email, password)?.let {
+            uiState = uiState.copy(errorMessage = it)
+            return
         }
         viewModelScope.launch {
             uiState = uiState.copy(isLoading = true, errorMessage = null, loginSuccess = false)
-            repository.login(email, password)
+            repository.login(Validation.normalizeEmail(email), password)
                 .onSuccess {
                     uiState = uiState.copy(isLoading = false, loginSuccess = true)
                 }
@@ -83,7 +74,4 @@ class LoginViewModel(
             errorMessage = null,
         )
     }
-
-    private fun isValidEmail(value: String): Boolean =
-        android.util.Patterns.EMAIL_ADDRESS.matcher(value).matches()
 }

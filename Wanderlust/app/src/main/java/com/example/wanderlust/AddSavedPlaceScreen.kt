@@ -17,6 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import com.example.wanderlust.locale.stringApp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.wanderlust.ui.components.StickyScrollScreen
@@ -39,12 +40,12 @@ fun AddSavedPlaceScreen(
     }
 
     StickyScrollScreen(
-        title = stringResource(R.string.add_saved_place_title),
+        title = stringApp(R.string.add_saved_place_title),
         onBack = onBack,
         bottomPadding = 24.dp,
     ) {
         Text(
-            stringResource(R.string.add_saved_place_hint),
+            stringApp(R.string.add_saved_place_hint),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -53,7 +54,7 @@ fun AddSavedPlaceScreen(
         OutlinedTextField(
             value = state.title,
             onValueChange = viewModel::onTitleChange,
-            label = { Text(stringResource(R.string.label_place_name)) },
+            label = { Text(stringApp(R.string.label_place_name)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
         )
@@ -61,7 +62,7 @@ fun AddSavedPlaceScreen(
         OutlinedTextField(
             value = state.location,
             onValueChange = viewModel::onLocationChange,
-            label = { Text(stringResource(R.string.label_place_address)) },
+            label = { Text(stringApp(R.string.label_place_address)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
         )
@@ -79,21 +80,21 @@ fun AddSavedPlaceScreen(
             modifier = Modifier.fillMaxWidth(),
             enabled = state.title.isNotBlank() || state.location.isNotBlank(),
         ) {
-            Text(stringResource(R.string.btn_open_google_maps))
+            Text(stringApp(R.string.btn_open_google_maps))
         }
         Spacer(Modifier.height(8.dp))
         OutlinedTextField(
             value = state.mapsLink,
             onValueChange = viewModel::onMapsLinkChange,
-            label = { Text(stringResource(R.string.label_maps_link)) },
+            label = { Text(stringApp(R.string.label_maps_link)) },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text(stringResource(R.string.hint_maps_link)) },
+            placeholder = { Text(stringApp(R.string.hint_maps_link)) },
         )
         Spacer(Modifier.height(8.dp))
         OutlinedTextField(
             value = state.latitude,
             onValueChange = viewModel::onLatitudeChange,
-            label = { Text(stringResource(R.string.label_latitude)) },
+            label = { Text(stringApp(R.string.label_latitude)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
         )
@@ -101,7 +102,7 @@ fun AddSavedPlaceScreen(
         OutlinedTextField(
             value = state.longitude,
             onValueChange = viewModel::onLongitudeChange,
-            label = { Text(stringResource(R.string.label_longitude)) },
+            label = { Text(stringApp(R.string.label_longitude)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
         )
@@ -109,7 +110,7 @@ fun AddSavedPlaceScreen(
         OutlinedTextField(
             value = state.notes,
             onValueChange = viewModel::onNotesChange,
-            label = { Text(stringResource(R.string.label_place_notes)) },
+            label = { Text(stringApp(R.string.label_place_notes)) },
             modifier = Modifier.fillMaxWidth(),
             minLines = 2,
         )
@@ -128,7 +129,7 @@ fun AddSavedPlaceScreen(
             if (state.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.height(24.dp))
             } else {
-                Text(stringResource(R.string.btn_save_to_my_list))
+                Text(stringApp(R.string.btn_save_to_my_list))
             }
         }
     }
