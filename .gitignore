@@ -1,0 +1,29 @@
+# Large / local-only (never push)
+Wanderlust.pdf
+*.pdf
+*.apk
+*.aab
+
+# Secrets & local config
+.env
+**/local.properties
+**/*.jks
+**/*.keystore
+
+# Dependencies & build
+**/node_modules/
+**/build/
+**/.gradle/
+**/.cxx/
+**/captures/
+**/.kotlin/
+
+# IDE
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Android / Kotlin
+**/.externalNativeBuild/
+**/xcuserdata/
