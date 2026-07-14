@@ -1,0 +1,1 @@
+# Wanderlust — default ProGuard rules
