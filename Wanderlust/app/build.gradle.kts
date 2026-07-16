@@ -38,8 +38,8 @@ android {
         targetSdk = 35
         // Bump BOTH when shipping an update (see backend/APP_UPDATE.md).
         // Keep APP_VERSION_CODE / APP_VERSION_NAME on the API in sync.
-        versionCode = 5
-        versionName = "1.2.2"
+        versionCode = 6
+        versionName = "1.2.3"
         buildConfigField("String", "MAPS_API_KEY", "\"$mapsApiKey\"")
         buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"$googleWebClientId\"")
         buildConfigField("String", "FACEBOOK_APP_ID", "\"$facebookAppId\"")
@@ -72,6 +72,14 @@ android {
             if (hasReleaseKeystore) {
                 signingConfig = signingConfigs.getByName("release")
             }
+        }
+    }
+
+    // Compress native libs so install works on more phones after Play Protect
+    // (avoids 16KB zip-align / PackageManager install failures).
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
         }
     }
 
