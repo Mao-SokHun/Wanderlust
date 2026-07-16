@@ -1,5 +1,9 @@
 package com.example.wanderlust.data
 
+import com.example.wanderlust.data.model.TourPackageDetails
+import com.example.wanderlust.data.model.TripDetails
+import com.example.wanderlust.data.model.RentalDetails
+
 /** Cambodia destinations — place names (not bookable tour packages). */
 data class DestinationCard(
     val id: String,
@@ -26,6 +30,9 @@ data class DestinationCard(
     val priceUsd: Double? = null,
     val distanceKm: Double? = null,
     val businessName: String? = null,
+    val packageDetails: TourPackageDetails? = null,
+    val tripDetails: TripDetails? = null,
+    val rentalDetails: RentalDetails? = null,
 )
 
 object DestinationCatalog {

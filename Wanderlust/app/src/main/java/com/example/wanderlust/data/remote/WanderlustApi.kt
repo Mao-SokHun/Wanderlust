@@ -1,13 +1,21 @@
 package com.example.wanderlust.data.remote
 
+import com.example.wanderlust.data.model.AdminAnalytics
+import com.example.wanderlust.data.model.AdminBillingPlanUpdateRequest
+import com.example.wanderlust.data.model.AdminBillingPlanUpdateResponse
+import com.example.wanderlust.data.model.AdminBillingPlansResponse
+import com.example.wanderlust.data.model.AdminBillingSettingsRequest
+import com.example.wanderlust.data.model.AdminBillingSettingsResponse
+import com.example.wanderlust.data.model.AdminPaymentActionResponse
+import com.example.wanderlust.data.model.AdminPendingPaymentsResponse
 import com.example.wanderlust.data.model.AdminStats
 import com.example.wanderlust.data.model.AdminTourRequest
 import com.example.wanderlust.data.model.AdminUser
-import com.example.wanderlust.data.model.AdminAnalytics
 import com.example.wanderlust.data.model.AppVersionInfo
 import com.example.wanderlust.data.model.AuthResponse
 import com.example.wanderlust.data.model.BillingPlansResponse
 import com.example.wanderlust.data.model.BusinessProfile
+import com.example.wanderlust.data.model.BusinessProfileUpdateRequest
 import com.example.wanderlust.data.model.BusinessTourRequest
 import com.example.wanderlust.data.model.CancelSubscriptionResponse
 import com.example.wanderlust.data.model.HealthResponse
@@ -26,14 +34,25 @@ import com.example.wanderlust.data.model.RegisterRequest
 import com.example.wanderlust.data.model.ResetPasswordRequest
 import com.example.wanderlust.data.model.SandboxPayRequest
 import com.example.wanderlust.data.model.SandboxPayResponse
+import com.example.wanderlust.data.model.BakongCreatePaymentRequest
+import com.example.wanderlust.data.model.BakongCreatePaymentResponse
+import com.example.wanderlust.data.model.BakongConfirmRequest
+import com.example.wanderlust.data.model.BakongConfirmResponse
+import com.example.wanderlust.data.model.BakongPaymentStatusResponse
+import com.example.wanderlust.data.model.ImageUploadResponse
 import com.example.wanderlust.data.model.SubscriptionStatus
+import com.example.wanderlust.data.model.SupportContactRequest
+import com.example.wanderlust.data.model.AppSupportInfo
 import com.example.wanderlust.data.model.Tour
+import okhttp3.MultipartBody
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -44,6 +63,15 @@ interface WanderlustApi {
 
     @GET("api/app/version")
     suspend fun getAppVersion(): AppVersionInfo
+
+    @GET("api/app/support")
+    suspend fun getAppSupport(): AppSupportInfo
+
+    @POST("api/support/contact")
+    suspend fun sendSupportContact(
+        @Header("Authorization") token: String? = null,
+        @Body request: SupportContactRequest,
+    ): MessageResponse
 
     @POST("api/auth/login")
     suspend fun login(@Body request: LoginRequest): AuthResponse
@@ -113,6 +141,24 @@ interface WanderlustApi {
         @Body request: SandboxPayRequest,
     ): SandboxPayResponse
 
+    @POST("api/billing/bakong/create-payment")
+    suspend fun createBakongPayment(
+        @Header("Authorization") token: String,
+        @Body request: BakongCreatePaymentRequest,
+    ): BakongCreatePaymentResponse
+
+    @GET("api/billing/bakong/payments/{id}")
+    suspend fun getBakongPayment(
+        @Header("Authorization") token: String,
+        @Path("id") id: String,
+    ): BakongPaymentStatusResponse
+
+    @POST("api/billing/bakong/confirm")
+    suspend fun confirmBakongPayment(
+        @Header("Authorization") token: String,
+        @Body request: BakongConfirmRequest,
+    ): BakongConfirmResponse
+
     @POST("api/billing/subscription/cancel")
     suspend fun cancelSubscription(
         @Header("Authorization") token: String,
@@ -120,6 +166,12 @@ interface WanderlustApi {
 
     @GET("api/business/me")
     suspend fun getBusinessProfile(@Header("Authorization") token: String): BusinessProfile
+
+    @PUT("api/business/me")
+    suspend fun updateBusinessProfile(
+        @Header("Authorization") token: String,
+        @Body request: BusinessProfileUpdateRequest,
+    ): BusinessProfile
 
     @GET("api/business/tours")
     suspend fun getBusinessTours(@Header("Authorization") token: String): List<Tour>
@@ -129,6 +181,13 @@ interface WanderlustApi {
         @Header("Authorization") token: String,
         @Body request: BusinessTourRequest,
     ): Tour
+
+    @Multipart
+    @POST("api/business/upload-images")
+    suspend fun uploadBusinessImages(
+        @Header("Authorization") token: String,
+        @Part images: List<MultipartBody.Part>,
+    ): ImageUploadResponse
 
     @PUT("api/business/tours/{id}")
     suspend fun updateBusinessTour(
@@ -183,4 +242,38 @@ interface WanderlustApi {
 
     @GET("api/admin/analytics")
     suspend fun getAnalytics(@Header("Authorization") token: String): AdminAnalytics
+
+    @GET("api/admin/billing/plans")
+    suspend fun getAdminBillingPlans(@Header("Authorization") token: String): AdminBillingPlansResponse
+
+    @PUT("api/admin/billing/plans/{id}")
+    suspend fun updateAdminBillingPlan(
+        @Header("Authorization") token: String,
+        @Path("id") id: String,
+        @Body request: AdminBillingPlanUpdateRequest,
+    ): AdminBillingPlanUpdateResponse
+
+    @PUT("api/admin/billing/settings")
+    suspend fun updateAdminBillingSettings(
+        @Header("Authorization") token: String,
+        @Body request: AdminBillingSettingsRequest,
+    ): AdminBillingSettingsResponse
+
+    @GET("api/admin/billing/payments")
+    suspend fun getAdminBillingPayments(
+        @Header("Authorization") token: String,
+        @Query("status") status: String = "pending",
+    ): AdminPendingPaymentsResponse
+
+    @POST("api/admin/billing/payments/{id}/approve")
+    suspend fun approveAdminBillingPayment(
+        @Header("Authorization") token: String,
+        @Path("id") id: String,
+    ): AdminPaymentActionResponse
+
+    @POST("api/admin/billing/payments/{id}/reject")
+    suspend fun rejectAdminBillingPayment(
+        @Header("Authorization") token: String,
+        @Path("id") id: String,
+    ): AdminPaymentActionResponse
 }

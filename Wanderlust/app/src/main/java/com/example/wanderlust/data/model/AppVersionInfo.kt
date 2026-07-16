@@ -11,5 +11,9 @@ data class AppVersionInfo(
     val iosDownloadUrl: String = "",
     val androidAvailable: Boolean = true,
     val iosAvailable: Boolean = false,
+    val iosMinVersion: String = "15.0",
+    val iosVersionName: String = "",
+    val iosMessage: String = "",
     val downloadPageUrl: String = "",
+    val iosDownloadPageUrl: String = "",
 )

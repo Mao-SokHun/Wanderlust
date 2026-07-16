@@ -190,7 +190,7 @@ fun NearbyPlacesExplorer(
         if (location != null) {
             viewModel.onUserLocation(location)
         } else {
-            viewModel.onLocationFailed(context.getString(R.string.nearby_location_unavailable))
+            viewModel.onLocationFailed(context.stringApp(R.string.nearby_location_unavailable))
         }
     }
 
@@ -1145,7 +1145,7 @@ private fun openAppSettings(context: android.content.Context) {
 private fun sharePlace(context: android.content.Context, place: NearbyPlace) {
     val mapsLink =
         "https://www.google.com/maps/search/?api=1&query=${place.latitude},${place.longitude}"
-    val body = context.getString(
+    val body = context.stringApp(
         R.string.nearby_share_text,
         place.name,
         place.address.ifBlank { place.primaryType.ifBlank { "Nearby" } },
@@ -1157,7 +1157,7 @@ private fun sharePlace(context: android.content.Context, place: NearbyPlace) {
         putExtra(Intent.EXTRA_TEXT, body)
     }
     runCatching {
-        context.startActivity(Intent.createChooser(intent, context.getString(R.string.nearby_share)))
+        context.startActivity(Intent.createChooser(intent, context.stringApp(R.string.nearby_share)))
     }
 }
 

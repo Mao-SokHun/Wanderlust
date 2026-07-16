@@ -5,14 +5,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.wanderlust.BuildConfig
 import com.example.wanderlust.data.repository.AuthRepository
 import com.example.wanderlust.util.Validation
 import kotlinx.coroutines.launch
 
 data class LoginUiState(
-    val email: String = "user@test.com",
-    val password: String = if (BuildConfig.DEBUG) "123456" else "",
+    val email: String = "",
+    val password: String = "",
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     val loginSuccess: Boolean = false,
@@ -57,21 +56,5 @@ class LoginViewModel(
 
     fun resetSuccess() {
         uiState = uiState.copy(loginSuccess = false)
-    }
-
-    fun fillTestUser() {
-        uiState = uiState.copy(
-            email = "user@test.com",
-            password = "123456",
-            errorMessage = null,
-        )
-    }
-
-    fun fillTestAdmin() {
-        uiState = uiState.copy(
-            email = "admin@test.com",
-            password = "admin123",
-            errorMessage = null,
-        )
     }
 }

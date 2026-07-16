@@ -9,6 +9,8 @@ Wanderlust.pdf
 **/local.properties
 **/*.jks
 **/*.keystore
+# Local payment guide (may contain personal ABA routing notes) — do not push
+BAKONG_KHQR_PAYMENT.md
 
 # Dependencies & build
 **/node_modules/

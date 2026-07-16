@@ -5,6 +5,26 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+    <queries>
+        <!-- Bank apps we deep-link / launch for KHQR checkout -->
+        <package android:name="com.paygo24.ibank" />
+        <package android:name="com.domain.acledabankqr" />
+        <package android:name="com.wingmoney.wingpay" />
+        <package android:name="jp.co.soramitsu.bakong" />
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="abamobilebank" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="market" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+    </queries>
+
     <application
         android:name=".WanderlustApp"
         android:allowBackup="true"

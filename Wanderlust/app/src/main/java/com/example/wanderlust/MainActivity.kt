@@ -26,11 +26,44 @@ import com.example.wanderlust.data.SessionManager
 import com.example.wanderlust.data.repository.AppUpdateAvailability
 import com.example.wanderlust.data.repository.AppUpdateRepository
 import com.example.wanderlust.locale.AppLocale
+import com.example.wanderlust.locale.stringApp
 import com.example.wanderlust.navigation.AppNavigator
 import com.example.wanderlust.navigation.AppScreen
 import com.example.wanderlust.navigation.BackNavResult
 import com.example.wanderlust.ui.components.AppUpdateDialog
 import com.example.wanderlust.ui.components.WanderlustNavTab
+import com.example.wanderlust.ui.screens.admin.AdminBillingPlansScreen
+import com.example.wanderlust.ui.screens.admin.AdminPendingPaymentsScreen
+import com.example.wanderlust.ui.screens.admin.AdminScreen
+import com.example.wanderlust.ui.screens.admin.AnalyticsScreen
+import com.example.wanderlust.ui.screens.admin.ManageUsersScreen
+import com.example.wanderlust.ui.screens.auth.ChangePasswordScreen
+import com.example.wanderlust.ui.screens.auth.ForgotPasswordScreen
+import com.example.wanderlust.ui.screens.auth.LoginScreen
+import com.example.wanderlust.ui.screens.auth.RegisterScreen
+import com.example.wanderlust.ui.screens.auth.ResetPasswordScreen
+import com.example.wanderlust.ui.screens.business.AddTourScreen
+import com.example.wanderlust.ui.screens.business.BusinessStudioScreen
+import com.example.wanderlust.ui.screens.business.BusinessSubscribeScreen
+import com.example.wanderlust.ui.screens.business.EditTourScreen
+import com.example.wanderlust.ui.screens.home.HomeScreen
+import com.example.wanderlust.ui.screens.home.MainShellScreen
+import com.example.wanderlust.ui.screens.home.SplashScreen
+import com.example.wanderlust.ui.screens.home.TipsScreen
+import com.example.wanderlust.ui.screens.home.WelcomeScreen
+import com.example.wanderlust.ui.screens.info.AboutScreen
+import com.example.wanderlust.ui.screens.info.HelpCenterScreen
+import com.example.wanderlust.ui.screens.info.LegalDocumentScreen
+import com.example.wanderlust.ui.screens.info.LegalDocumentType
+import com.example.wanderlust.ui.screens.profile.EditProfileScreen
+import com.example.wanderlust.ui.screens.profile.ExportDataScreen
+import com.example.wanderlust.ui.screens.profile.ProfileScreen
+import com.example.wanderlust.ui.screens.profile.SettingsScreen
+import com.example.wanderlust.ui.screens.saved.AddSavedPlaceScreen
+import com.example.wanderlust.ui.screens.saved.SavedScreen
+import com.example.wanderlust.ui.screens.tours.MyBookingsScreen
+import com.example.wanderlust.ui.screens.tours.TourDetailScreen
+import com.example.wanderlust.ui.screens.tours.ToursMarketplaceScreen
 import com.example.wanderlust.ui.theme.WanderlustTheme
 import androidx.compose.runtime.key
 
@@ -87,7 +120,7 @@ class MainActivity : ComponentActivity() {
                         lastExitPromptAtMs = SystemClock.elapsedRealtime()
                         Toast.makeText(
                             context,
-                            context.getString(R.string.msg_press_back_again_exit),
+                            context.stringApp(R.string.msg_press_back_again_exit),
                             Toast.LENGTH_SHORT,
                         ).show()
                     }
@@ -208,8 +241,8 @@ class MainActivity : ComponentActivity() {
                                     onOpenSavedPlans = { requireLogin { nav.push(AppScreen.MyTrips) } },
                                     onOpenSettings = { nav.push(AppScreen.Settings) },
                                     onOpenHelp = { nav.push(AppScreen.HelpCenter) },
-                                    onOpenPrivacy = { nav.push(AppScreen.LegalDocument(com.example.wanderlust.LegalDocumentType.PrivacyPolicy)) },
-                                    onOpenTerms = { nav.push(AppScreen.LegalDocument(com.example.wanderlust.LegalDocumentType.TermsOfService)) },
+                                    onOpenPrivacy = { nav.push(AppScreen.LegalDocument(LegalDocumentType.PrivacyPolicy)) },
+                                    onOpenTerms = { nav.push(AppScreen.LegalDocument(LegalDocumentType.TermsOfService)) },
                                     onOpenAbout = { nav.push(AppScreen.About) },
                                     onOpenBusinessStudio = {
                                         requireLogin { nav.push(AppScreen.BusinessStudio) }
@@ -270,6 +303,8 @@ class MainActivity : ComponentActivity() {
                                     onAddTour = { nav.push(AppScreen.AddTour) },
                                     onEditTour = { nav.push(AppScreen.EditTour) },
                                     onManageUsers = { nav.push(AppScreen.ManageUsers) },
+                                    onManageBillingPlans = { nav.push(AppScreen.AdminBillingPlans) },
+                                    onManagePendingPayments = { nav.push(AppScreen.AdminPendingPayments) },
                                     onOpenAnalytics = { nav.push(AppScreen.Analytics) },
                                 )
 
@@ -282,6 +317,14 @@ class MainActivity : ComponentActivity() {
                                 )
 
                                 AppScreen.ManageUsers -> ManageUsersScreen(
+                                    onBack = { navigateBack() },
+                                )
+
+                                AppScreen.AdminBillingPlans -> AdminBillingPlansScreen(
+                                    onBack = { navigateBack() },
+                                )
+
+                                AppScreen.AdminPendingPayments -> AdminPendingPaymentsScreen(
                                     onBack = { navigateBack() },
                                 )
 
@@ -300,12 +343,13 @@ class MainActivity : ComponentActivity() {
                                     isDarkTheme = isDarkTheme,
                                     onToggleTheme = toggleTheme,
                                     onOpenPrivacy = {
-                                        nav.push(AppScreen.LegalDocument(com.example.wanderlust.LegalDocumentType.PrivacyPolicy))
+                                        nav.push(AppScreen.LegalDocument(LegalDocumentType.PrivacyPolicy))
                                     },
                                     onOpenTerms = {
-                                        nav.push(AppScreen.LegalDocument(com.example.wanderlust.LegalDocumentType.TermsOfService))
+                                        nav.push(AppScreen.LegalDocument(LegalDocumentType.TermsOfService))
                                     },
                                     onOpenAbout = { nav.push(AppScreen.About) },
+                                    onOpenHelp = { nav.push(AppScreen.HelpCenter) },
                                     onBack = { navigateBack() },
                                 )
 

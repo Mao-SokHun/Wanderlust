@@ -80,7 +80,7 @@ fun NearbyMapSection(
         hasPermission = grants[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
             grants[Manifest.permission.ACCESS_COARSE_LOCATION] == true
         if (!hasPermission) {
-            errorMessage = context.getString(R.string.nearby_permission_denied)
+            errorMessage = context.stringApp(R.string.nearby_permission_denied)
         }
     }
 
@@ -94,7 +94,7 @@ fun NearbyMapSection(
             isLoading = false
         } else {
             isLoading = false
-            errorMessage = context.getString(R.string.nearby_location_unavailable)
+            errorMessage = context.stringApp(R.string.nearby_location_unavailable)
         }
     }
 

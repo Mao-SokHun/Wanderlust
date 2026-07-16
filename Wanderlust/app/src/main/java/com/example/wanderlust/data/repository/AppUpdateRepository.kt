@@ -35,6 +35,11 @@ class AppUpdateRepository {
         )
     }
 
+    /** Latest published version from API (even when user is already up to date). */
+    suspend fun fetchLatestInfo(): Result<AppVersionInfo> = runCatching {
+        ApiConnection.api().getAppVersion()
+    }
+
     companion object {
         fun installedVersionLabel(): String =
             "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"

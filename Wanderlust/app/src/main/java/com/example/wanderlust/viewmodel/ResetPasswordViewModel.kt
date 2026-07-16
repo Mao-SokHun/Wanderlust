@@ -34,7 +34,7 @@ class ResetPasswordViewModel(
         update { copy(email = value.take(Validation.EMAIL_MAX), errorMessage = null) }
 
     fun onTokenChange(value: String) =
-        update { copy(token = value.take(32), errorMessage = null) }
+        update { copy(token = value.filter { it.isLetterOrDigit() }.take(8), errorMessage = null) }
 
     fun onNewPasswordChange(value: String) =
         update { copy(newPassword = value.take(Validation.PASSWORD_MAX), errorMessage = null) }

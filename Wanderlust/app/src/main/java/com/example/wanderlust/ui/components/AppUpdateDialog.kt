@@ -12,11 +12,12 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.example.wanderlust.locale.stringApp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.wanderlust.R
 import com.example.wanderlust.data.repository.AppUpdateAvailability
+import com.example.wanderlust.data.repository.AppUpdateRepository
+import com.example.wanderlust.locale.stringApp
 
 @Composable
 fun AppUpdateDialog(
@@ -24,6 +25,7 @@ fun AppUpdateDialog(
     onDismiss: () -> Unit,
 ) {
     val context = LocalContext.current
+    val installed = AppUpdateRepository.installedVersionLabel()
     AlertDialog(
         onDismissRequest = {
             if (!update.forceUpdate) onDismiss()
@@ -43,11 +45,17 @@ fun AppUpdateDialog(
             ) {
                 Text(
                     stringApp(
-                        R.string.update_available_body,
+                        R.string.update_available_compare,
+                        installed,
                         update.info.versionName,
                         update.info.versionCode,
                     ),
                     style = MaterialTheme.typography.bodyMedium,
+                )
+                Text(
+                    stringApp(R.string.update_available_body, update.info.versionName, update.info.versionCode),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 if (update.info.releaseNotes.isNotBlank()) {
                     Text(
@@ -56,6 +64,11 @@ fun AppUpdateDialog(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
+                Text(
+                    stringApp(R.string.about_install_hint),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
         },
         confirmButton = {
@@ -69,7 +82,7 @@ fun AppUpdateDialog(
                     if (!update.forceUpdate) onDismiss()
                 },
             ) {
-                Text(stringApp(R.string.update_download))
+                Text(stringApp(R.string.about_install_update), fontWeight = FontWeight.Bold)
             }
         },
         dismissButton = {

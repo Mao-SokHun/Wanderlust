@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.wanderlust.data.SessionManager
 import com.example.wanderlust.data.model.UserProfile
 import com.example.wanderlust.data.repository.AuthRepository
+import com.example.wanderlust.locale.AppLocale
 import com.example.wanderlust.util.Validation
 import kotlinx.coroutines.launch
 
@@ -141,6 +142,32 @@ class EditProfileViewModel(
         }
         Validation.requireName(name)?.let {
             uiState = uiState.copy(errorMessage = it)
+            return
+        }
+        Validation.optionalPhone(uiState.phone)?.let {
+            uiState = uiState.copy(errorMessage = it)
+            return
+        }
+        Validation.optionalBirthDate(uiState.birthDate)?.let {
+            uiState = uiState.copy(errorMessage = it)
+            return
+        }
+        if (uiState.city.trim().length > Validation.CITY_MAX) {
+            uiState = uiState.copy(
+                errorMessage = if (AppLocale.isKhmer) "ទីក្រុងវែងពេក" else "City is too long",
+            )
+            return
+        }
+        if (uiState.bio.trim().length > Validation.BIO_MAX) {
+            uiState = uiState.copy(
+                errorMessage = if (AppLocale.isKhmer) "Bio វែងពេក" else "Bio is too long",
+            )
+            return
+        }
+        if (uiState.emergencyContact.trim().length > 120) {
+            uiState = uiState.copy(
+                errorMessage = if (AppLocale.isKhmer) "ទំនាក់ទំនងបន្ទាន់វែងពេក" else "Emergency contact is too long",
+            )
             return
         }
         val snapshot = uiState

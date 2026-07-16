@@ -1,5 +1,6 @@
 package com.example.wanderlust.locale
 
+import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -73,6 +74,26 @@ fun stringApp(@StringRes id: Int, vararg formatArgs: Any): String {
         else context.resources.getIdentifier("${name}_kh", "string", context.packageName)
     }
     return if (kmId != 0) stringResource(kmId, *formatArgs) else stringResource(id, *formatArgs)
+}
+
+/**
+ * Non-Compose: toasts, ViewModels, Intents. Honors [AppLocale.code] + `_kh` resources.
+ */
+fun Context.stringApp(@StringRes id: Int, vararg formatArgs: Any): String {
+    val lang = AppLocale.code
+    if (lang == AppLocale.EN) {
+        return if (formatArgs.isEmpty()) getString(id) else getString(id, *formatArgs)
+    }
+    val name = resources.getResourceEntryName(id)
+    val kmId =
+        if (name.endsWith("_kh")) id
+        else resources.getIdentifier("${name}_kh", "string", packageName)
+    return when {
+        kmId == 0 && formatArgs.isEmpty() -> getString(id)
+        kmId == 0 -> getString(id, *formatArgs)
+        formatArgs.isEmpty() -> getString(kmId)
+        else -> getString(kmId, *formatArgs)
+    }
 }
 
 @Composable

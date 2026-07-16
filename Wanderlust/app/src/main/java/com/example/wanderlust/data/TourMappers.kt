@@ -2,6 +2,9 @@ package com.example.wanderlust.data
 
 import com.example.wanderlust.data.local.FavoriteEntity
 import com.example.wanderlust.data.model.Tour
+import com.example.wanderlust.data.model.durationLabel
+import com.example.wanderlust.data.model.routeLabel
+import com.example.wanderlust.data.model.scheduleLabel
 
 fun Tour.toDestinationCard(): DestinationCard {
     val catalog = DestinationCatalog.findByTitle(title)
@@ -15,6 +18,9 @@ fun Tour.toDestinationCard(): DestinationCard {
             priceUsd = priceUsd,
             distanceKm = distanceKm,
             businessName = businessName,
+            packageDetails = packageDetails,
+            tripDetails = tripDetails,
+            rentalDetails = rentalDetails,
         )
     }
     if (id.startsWith("custom-")) {
@@ -31,21 +37,39 @@ fun Tour.toDestinationCard(): DestinationCard {
             isCustomPlace = true,
             ratingCount = ratingCount,
             listingType = listingType,
+            packageDetails = packageDetails,
+            tripDetails = tripDetails,
+            rentalDetails = rentalDetails,
         )
     }
-    val loc = location.ifBlank {
-        serviceArea.ifBlank {
-            businessName?.takeIf { it.isNotBlank() }?.let { "$it • Cambodia" }
-                ?: "Cambodia • $category"
+    val loc = when {
+        listingType == "TRIP" && tripDetails != null ->
+            tripDetails.routeLabel().ifBlank { location }
+        else -> location.ifBlank {
+            serviceArea.ifBlank {
+                businessName?.takeIf { it.isNotBlank() }?.let { "$it • Cambodia" }
+                    ?: "Cambodia • $category"
+            }
         }
     }
     val price = priceLabel.ifBlank {
         when {
-            priceUsd != null && listingType == "VEHICLE" ->
+            priceUsd != null && listingType == "TRIP" -> "$${priceUsd.toInt()} / seat"
+            priceUsd != null && (listingType == "RENTAL" || listingType == "VEHICLE") ->
                 "$${priceUsd.toInt()} / ${rateUnit.ifBlank { "day" }}"
-            priceUsd != null -> "$${priceUsd.toInt()}"
+            priceUsd != null -> {
+                val unit = when (packageDetails?.priceType) {
+                    "group" -> " / group"
+                    else -> " / person"
+                }
+                "$${priceUsd.toInt()}$unit"
+            }
             businessName != null -> businessName
-            else -> if (listingType == "VEHICLE") "Transport" else "Tour"
+            else -> when (listingType) {
+                "TRIP" -> "Bus trip"
+                "RENTAL", "VEHICLE" -> "Car rental"
+                else -> "Tour"
+            }
         }
     }
     return DestinationCard(
@@ -57,12 +81,22 @@ fun Tour.toDestinationCard(): DestinationCard {
         ratingCount = ratingCount,
         priceLabel = price,
         duration = duration.ifBlank {
-            listOfNotNull(
-                vehicleType.takeIf { it.isNotBlank() },
-                seats?.let { "$it seats" },
-            ).joinToString(" · ")
+            tripDetails?.scheduleLabel().orEmpty().ifBlank {
+                packageDetails?.durationLabel().orEmpty().ifBlank {
+                    listOfNotNull(
+                        vehicleType.takeIf { it.isNotBlank() },
+                        seats?.let { "$it seats" },
+                        rentalDetails?.makeModel?.takeIf { it.isNotBlank() },
+                    ).joinToString(" · ")
+                }
+            }
         },
-        imageUrl = imageUrl.ifBlank { WanderlustImages.imageForTour(title, category, id) },
+        imageUrl = imageUrl.ifBlank {
+            rentalDetails?.imageUrls?.firstOrNull()
+                ?: packageDetails?.imageUrls?.firstOrNull()
+                ?: tripDetails?.imageUrls?.firstOrNull().orEmpty()
+                    .ifBlank { WanderlustImages.imageForTour(title, category, id) }
+        },
         category = category,
         categoryKh = CambodiaLabels.categoryKh(category),
         description = description,
@@ -75,6 +109,9 @@ fun Tour.toDestinationCard(): DestinationCard {
         priceUsd = priceUsd,
         distanceKm = distanceKm,
         businessName = businessName,
+        packageDetails = packageDetails,
+        tripDetails = tripDetails,
+        rentalDetails = rentalDetails,
     )
 }
 

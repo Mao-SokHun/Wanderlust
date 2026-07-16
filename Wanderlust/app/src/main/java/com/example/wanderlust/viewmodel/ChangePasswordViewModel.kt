@@ -34,6 +34,8 @@ class ChangePasswordViewModel(
     fun onConfirmChange(value: String) =
         update { copy(confirmPassword = value.take(Validation.PASSWORD_MAX), errorMessage = null) }
 
+    fun clearSuccessMessage() = update { copy(successMessage = null) }
+
     fun changePassword() {
         val s = uiState
         val error = Validation.requirePassword(s.currentPassword, "Current password", "ពាក្យសម្ងាត់បច្ចុប្បន្ន")

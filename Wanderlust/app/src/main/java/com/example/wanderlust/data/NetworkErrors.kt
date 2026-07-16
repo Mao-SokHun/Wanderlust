@@ -11,9 +11,17 @@ private val errorGson = Gson()
 
 fun friendlyNetworkMessage(throwable: Throwable): String {
     if (throwable is HttpException) {
-        parseApiErrorMessage(throwable)?.let { return it }
+        parseApiErrorMessage(throwable)?.let { apiMsg ->
+            return when {
+                apiMsg.contains("Invalid token", ignoreCase = true) ||
+                    apiMsg.contains("Missing token", ignoreCase = true) ||
+                    apiMsg.contains("jwt", ignoreCase = true) ->
+                    "Session expired. Sign out and sign in again, then retry payment."
+                else -> apiMsg
+            }
+        }
         return when (throwable.code()) {
-            401 -> "Wrong email or password. Use test: user@test.com / 123456"
+            401 -> "Wrong email or password."
             403 -> "Access denied"
             400 -> "Invalid request"
             404 -> "Not found"
@@ -55,7 +63,7 @@ private fun parseApiErrorMessage(http: HttpException): String? {
 private fun parseHttpStatusLine(raw: String): String? {
     val code = Regex("HTTP (\\d+)").find(raw)?.groupValues?.getOrNull(1)?.toIntOrNull() ?: return null
     return when (code) {
-        401 -> "Wrong email or password. Use test: user@test.com / 123456"
+        401 -> "Wrong email or password."
         else -> null
     }
 }

@@ -43,7 +43,21 @@ data class ChangePasswordRequest(
     val newPassword: String,
 )
 
-data class MessageResponse(val message: String)
+data class MessageResponse(val message: String, val telegramUsername: String? = null)
+
+data class SupportContactRequest(
+    val topic: String = "App problem",
+    val message: String,
+    val replyEmail: String = "",
+    val replyPhone: String = "",
+)
+
+data class AppSupportInfo(
+    val telegramUsername: String = "",
+    val telegramUrl: String = "",
+    val email: String = "",
+    val phone: String = "",
+)
 
 data class UserProfile(
     val id: String,

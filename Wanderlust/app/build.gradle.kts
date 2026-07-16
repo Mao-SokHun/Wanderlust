@@ -25,8 +25,8 @@ android {
         targetSdk = 35
         // Bump BOTH when shipping an update (see backend/APP_UPDATE.md).
         // Keep APP_VERSION_CODE / APP_VERSION_NAME on the API in sync.
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1"
         buildConfigField("String", "MAPS_API_KEY", "\"$mapsApiKey\"")
         manifestPlaceholders["MAPS_API_KEY"] = mapsApiKey
     }
@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.coil.compose)
+    implementation(libs.zxing.core)
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
     implementation(libs.androidx.room.runtime)
