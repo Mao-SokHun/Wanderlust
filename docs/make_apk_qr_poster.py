@@ -1,7 +1,7 @@
 """Generate branded Wanderlust APK QR posters.
 
-- wanderlust-apk-qr.png        → download page (follows latest API link)
-- wanderlust-apk-direct-qr.png → direct GitHub Release APK for this version
+Both posters open the branded download page (not raw GitHub),
+so phones see the nice install screen first, then tap Download.
 """
 from pathlib import Path
 
@@ -12,12 +12,8 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = Path(__file__).resolve().parent
 LOGO_PATH = ROOT / "Wanderlust" / "app" / "src" / "main" / "res" / "drawable" / "logo.png"
 
-# Bump with each release (keep in sync with GitHub Releases + APP_DOWNLOAD_URL).
-VERSION = "1.2.1"
-DOWNLOAD_PAGE_URL = "https://wanderlust-api-dm3y.onrender.com/download/?auto=1"
-DIRECT_APK_URL = (
-    f"https://github.com/Mao-SokHun/Wanderlust/releases/download/v{VERSION}/wanderlust-{VERSION}.apk"
-)
+# Branded page — no ?auto=1 so users see the write-up before downloading.
+DOWNLOAD_PAGE_URL = "https://wanderlust-api-dm3y.onrender.com/download/"
 
 CORAL = (255, 107, 53)
 GOLD = (212, 175, 120)
@@ -147,7 +143,6 @@ def make_poster(url: str) -> Image.Image:
 
 def main() -> None:
     page = make_poster(DOWNLOAD_PAGE_URL)
-    direct = make_poster(DIRECT_APK_URL)
 
     out_main = OUT / "wanderlust-apk-qr.png"
     out_direct = OUT / "wanderlust-apk-direct-qr.png"
@@ -155,13 +150,11 @@ def main() -> None:
 
     page.save(out_main, "PNG", optimize=True)
     page.save(out_download, "PNG", optimize=True)
-    direct.save(out_direct, "PNG", optimize=True)
+    page.save(out_direct, "PNG", optimize=True)
 
-    print(f"version={VERSION}")
     print(f"page_url={DOWNLOAD_PAGE_URL}")
-    print(f"direct_url={DIRECT_APK_URL}")
     print(f"saved {out_main} size={page.size}")
-    print(f"saved {out_direct} size={direct.size}")
+    print(f"saved {out_direct} size={page.size}")
     print(f"saved {out_download} size={page.size}")
 
 
