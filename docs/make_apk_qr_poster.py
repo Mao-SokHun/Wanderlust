@@ -1,4 +1,8 @@
-"""Generate branded Wanderlust APK QR poster."""
+"""Generate branded Wanderlust APK QR posters.
+
+- wanderlust-apk-qr.png        → download page (follows latest API link)
+- wanderlust-apk-direct-qr.png → direct GitHub Release APK for this version
+"""
 from pathlib import Path
 
 import qrcode
@@ -7,7 +11,13 @@ from PIL import Image, ImageDraw, ImageFilter
 ROOT = Path(__file__).resolve().parents[1]
 OUT = Path(__file__).resolve().parent
 LOGO_PATH = ROOT / "Wanderlust" / "app" / "src" / "main" / "res" / "drawable" / "logo.png"
-URL = "https://wanderlust-api-dm3y.onrender.com/download/?auto=1"
+
+# Bump with each release (keep in sync with GitHub Releases + APP_DOWNLOAD_URL).
+VERSION = "1.2.1"
+DOWNLOAD_PAGE_URL = "https://wanderlust-api-dm3y.onrender.com/download/?auto=1"
+DIRECT_APK_URL = (
+    f"https://github.com/Mao-SokHun/Wanderlust/releases/download/v{VERSION}/wanderlust-{VERSION}.apk"
+)
 
 CORAL = (255, 107, 53)
 GOLD = (212, 175, 120)
@@ -24,7 +34,7 @@ def rounded_mask(size: tuple[int, int], radius: int) -> Image.Image:
     return mask
 
 
-def main() -> None:
+def make_poster(url: str) -> Image.Image:
     base = Image.new("RGB", (W, H), INK)
     px = base.load()
     for y in range(H):
@@ -46,7 +56,6 @@ def main() -> None:
     img = base.copy()
     draw = ImageDraw.Draw(img)
 
-    # Official logo — full badge (plane + gold wordmark)
     logo_src = Image.open(LOGO_PATH).convert("RGBA")
     logo_size = 320
     logo = logo_src.resize((logo_size, logo_size), Image.Resampling.LANCZOS)
@@ -76,7 +85,6 @@ def main() -> None:
     img.paste(ring, (logo_x - 7, logo_y - 7), ring)
     img.paste(logo_rounded, (logo_x, logo_y), logo_rounded)
 
-    # Soft gold hairline under logo, then large breathing room before QR
     uline_w = 72
     uline_x = (W - uline_w) // 2
     uline_y = logo_y + logo_size + 48
@@ -86,7 +94,6 @@ def main() -> None:
         fill=GOLD,
     )
 
-    # Extra breathing room between brand block and QR
     qr_card_top = uline_y + 176
 
     qr = qrcode.QRCode(
@@ -95,7 +102,7 @@ def main() -> None:
         box_size=14,
         border=2,
     )
-    qr.add_data(URL)
+    qr.add_data(url)
     qr.make(fit=True)
     qr_img = qr.make_image(fill_color="black", back_color="white").convert("RGB")
     qr_side = 540
@@ -135,12 +142,27 @@ def main() -> None:
     content_bottom = card_y + card_side + 88
     if content_bottom < H - 20:
         img = img.crop((0, 0, W, content_bottom))
+    return img
+
+
+def main() -> None:
+    page = make_poster(DOWNLOAD_PAGE_URL)
+    direct = make_poster(DIRECT_APK_URL)
 
     out_main = OUT / "wanderlust-apk-qr.png"
     out_direct = OUT / "wanderlust-apk-direct-qr.png"
-    img.save(out_main, "PNG", optimize=True)
-    img.save(out_direct, "PNG", optimize=True)
-    print(f"saved {out_main} size={img.size}")
+    out_download = OUT / "wanderlust-download-qr.png"
+
+    page.save(out_main, "PNG", optimize=True)
+    page.save(out_download, "PNG", optimize=True)
+    direct.save(out_direct, "PNG", optimize=True)
+
+    print(f"version={VERSION}")
+    print(f"page_url={DOWNLOAD_PAGE_URL}")
+    print(f"direct_url={DIRECT_APK_URL}")
+    print(f"saved {out_main} size={page.size}")
+    print(f"saved {out_direct} size={direct.size}")
+    print(f"saved {out_download} size={page.size}")
 
 
 if __name__ == "__main__":
