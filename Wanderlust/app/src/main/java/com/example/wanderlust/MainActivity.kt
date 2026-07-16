@@ -1,5 +1,6 @@
 package com.example.wanderlust
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import android.widget.Toast
@@ -7,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import com.example.wanderlust.util.SocialAuthHelper
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -21,7 +23,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.example.wanderlust.data.GuestAccess
 import com.example.wanderlust.data.SessionManager
 import com.example.wanderlust.data.repository.AppUpdateAvailability
 import com.example.wanderlust.data.repository.AppUpdateRepository
@@ -46,10 +47,8 @@ import com.example.wanderlust.ui.screens.business.AddTourScreen
 import com.example.wanderlust.ui.screens.business.BusinessStudioScreen
 import com.example.wanderlust.ui.screens.business.BusinessSubscribeScreen
 import com.example.wanderlust.ui.screens.business.EditTourScreen
-import com.example.wanderlust.ui.screens.home.HomeScreen
 import com.example.wanderlust.ui.screens.home.MainShellScreen
 import com.example.wanderlust.ui.screens.home.SplashScreen
-import com.example.wanderlust.ui.screens.home.TipsScreen
 import com.example.wanderlust.ui.screens.home.WelcomeScreen
 import com.example.wanderlust.ui.screens.info.AboutScreen
 import com.example.wanderlust.ui.screens.info.HelpCenterScreen
@@ -68,6 +67,13 @@ import com.example.wanderlust.ui.theme.WanderlustTheme
 import androidx.compose.runtime.key
 
 class MainActivity : ComponentActivity() {
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        SocialAuthHelper.facebookCallbackManager.onActivityResult(requestCode, resultCode, data)
+        @Suppress("DEPRECATION")
+        super.onActivityResult(requestCode, resultCode, data)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -102,7 +108,7 @@ class MainActivity : ComponentActivity() {
                     when {
                         SessionManager.isLoggedIn() -> AppScreen.Main(WanderlustNavTab.Home)
                         nav.stack.any { it is AppScreen.Main } -> AppScreen.Main(WanderlustNavTab.Home)
-                        else -> AppScreen.Welcome
+                        else -> AppScreen.Main(WanderlustNavTab.Home)
                     },
                 )
                 syncTabFromStack()
@@ -149,22 +155,14 @@ class MainActivity : ComponentActivity() {
                                 if (SessionManager.isLoggedIn()) action() else openLogin()
                             }
                             val openDestination: (com.example.wanderlust.data.DestinationCard) -> Unit = { dest ->
-                                if (GuestAccess.canViewDestination(dest)) {
-                                    nav.push(AppScreen.TourDetail(dest))
-                                } else {
-                                    openLogin()
-                                }
+                                nav.push(AppScreen.TourDetail(dest))
                             }
 
                             when (val current = nav.current) {
                                 AppScreen.Splash -> SplashScreen(
                                     onFinished = {
-                                        if (SessionManager.isLoggedIn()) {
-                                            mainTab = WanderlustNavTab.Home
-                                            nav.resetTo(AppScreen.Main(WanderlustNavTab.Home))
-                                        } else {
-                                            nav.resetTo(AppScreen.Welcome)
-                                        }
+                                        mainTab = WanderlustNavTab.Home
+                                        nav.resetTo(AppScreen.Main(WanderlustNavTab.Home))
                                     },
                                 )
 
@@ -179,7 +177,7 @@ class MainActivity : ComponentActivity() {
                                     onLogin = { nav.push(AppScreen.Login) },
                                     onRegister = { nav.push(AppScreen.Register) },
                                     onGoogleContinue = { nav.push(AppScreen.Login) },
-                                    onAppleContinue = { nav.push(AppScreen.Register) },
+                                    onFacebookContinue = { nav.push(AppScreen.Login) },
                                 )
 
                                 AppScreen.Login -> LoginScreen(
@@ -249,10 +247,17 @@ class MainActivity : ComponentActivity() {
                                     },
                                     onLogout = {
                                         SessionManager.clear()
-                                        nav.resetTo(AppScreen.Welcome)
+                                        mainTab = WanderlustNavTab.Home
+                                        nav.resetTo(AppScreen.Main(WanderlustNavTab.Home))
                                     },
                                     onAddSavedPlace = {
-                                        requireLogin { nav.push(AppScreen.AddSavedPlace) }
+                                        if (!SessionManager.isLoggedIn()) {
+                                            // Will show Saved tab panel / register flow
+                                            mainTab = WanderlustNavTab.Saved
+                                            nav.resetTo(AppScreen.Main(WanderlustNavTab.Saved))
+                                        } else {
+                                            nav.push(AppScreen.AddSavedPlace)
+                                        }
                                     },
                                 )
 

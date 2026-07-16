@@ -108,6 +108,7 @@ import kotlin.coroutines.resume
 fun NearbyPlacesExplorer(
     viewModel: NearbyPlacesViewModel = viewModel(),
     onSignIn: (() -> Unit)? = null,
+    onRegister: (() -> Unit)? = onSignIn,
     onPlaceSaved: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
@@ -119,10 +120,10 @@ fun NearbyPlacesExplorer(
     val mapBringIntoView = remember { BringIntoViewRequester() }
     var permissionPromptStarted by remember { mutableStateOf(false) }
     var selectedPlace by remember { mutableStateOf<NearbyPlace?>(null) }
+    var showRegisterToSave by remember { mutableStateOf(false) }
     val detailSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     val savedText = stringLocalized(R.string.msg_saved, R.string.msg_saved_kh)
-    val signInRequired = stringApp(R.string.nearby_sign_in_to_save)
     val saveFailed = stringLocalized(R.string.msg_save_failed, R.string.msg_save_failed_kh)
     val copiedText = stringApp(R.string.nearby_copied)
 
@@ -139,13 +140,20 @@ fun NearbyPlacesExplorer(
                 onPlaceSaved?.invoke()
             }
             "sign_in_required" -> {
-                snackbar.showSnackbar(signInRequired)
-                onSignIn?.invoke()
+                showRegisterToSave = true
             }
             "save_failed" -> snackbar.showSnackbar(saveFailed)
             else -> snackbar.showSnackbar(code)
         }
         viewModel.clearSnackbar()
+    }
+
+    if (showRegisterToSave) {
+        RegisterToSaveDialog(
+            onDismiss = { showRegisterToSave = false },
+            onRegister = { onRegister?.invoke() ?: onSignIn?.invoke() },
+            onSignIn = { onSignIn?.invoke() },
+        )
     }
 
     LaunchedEffect(state.resultsVersion) {

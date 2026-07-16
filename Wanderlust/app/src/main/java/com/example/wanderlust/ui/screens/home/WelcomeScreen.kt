@@ -56,7 +56,7 @@ fun WelcomeScreen(
     onLogin: () -> Unit,
     onRegister: () -> Unit,
     onGoogleContinue: () -> Unit,
-    onAppleContinue: () -> Unit,
+    onFacebookContinue: () -> Unit,
 ) {
     val scrimTop = Color.Black.copy(alpha = if (isDarkTheme) 0.35f else 0.25f)
     val scrimBottom = MaterialTheme.colorScheme.background
@@ -180,13 +180,13 @@ fun WelcomeScreen(
                             Text("Google", style = MaterialTheme.typography.labelLarge)
                         }
                         OutlinedButton(
-                            onClick = onAppleContinue,
+                            onClick = onFacebookContinue,
                             modifier = Modifier
                                 .weight(1f)
                                 .height(44.dp),
                             shape = RoundedCornerShape(12.dp),
                         ) {
-                            Text("Apple", style = MaterialTheme.typography.labelLarge)
+                            Text("Facebook", style = MaterialTheme.typography.labelLarge)
                         }
                     }
                     Text(

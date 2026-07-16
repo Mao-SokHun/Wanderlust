@@ -14,7 +14,7 @@ com/example/wanderlust/
     ├── theme/
     └── screens/             # One screen (or form) ≈ one file
         ├── auth/            # Login, Register, passwords
-        ├── home/            # Splash, Welcome, Home, Tips, MainShell
+        ├── home/            # Splash, Welcome, Home, MainShell
         ├── tours/           # Marketplace, detail, bookings
         ├── saved/           # Saved list, add place
         ├── profile/         # Profile, edit, settings, export

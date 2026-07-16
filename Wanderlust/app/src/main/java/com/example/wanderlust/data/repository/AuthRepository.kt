@@ -27,6 +27,30 @@ class AuthRepository {
             response
         }
 
+    suspend fun socialLogin(
+        provider: String,
+        idToken: String? = null,
+        accessToken: String? = null,
+    ): Result<AuthResponse> =
+        apiCall { api ->
+            val response = api.socialLogin(
+                com.example.wanderlust.data.model.SocialLoginRequest(
+                    provider = provider,
+                    idToken = idToken,
+                    accessToken = accessToken,
+                ),
+            )
+            SessionManager.saveLogin(
+                token = response.token,
+                name = response.name,
+                role = response.role,
+                userId = response.id,
+                email = response.email,
+            )
+            syncProfileFromServer(api)
+            response
+        }
+
     suspend fun register(
         name: String,
         email: String,

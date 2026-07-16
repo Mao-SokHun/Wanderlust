@@ -76,6 +76,9 @@ interface WanderlustApi {
     @POST("api/auth/login")
     suspend fun login(@Body request: LoginRequest): AuthResponse
 
+    @POST("api/auth/social")
+    suspend fun socialLogin(@Body request: com.example.wanderlust.data.model.SocialLoginRequest): AuthResponse
+
     @POST("api/auth/register")
     suspend fun register(@Body request: RegisterRequest): AuthResponse
 

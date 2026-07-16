@@ -11,6 +11,8 @@ import com.example.wanderlust.data.SessionManager
 import com.example.wanderlust.data.local.DbProvider
 import com.example.wanderlust.data.remote.ApiConnection
 import com.example.wanderlust.data.repository.AuthRepository
+import com.example.wanderlust.util.SocialAuthHelper
+import com.facebook.FacebookSdk
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -25,6 +27,11 @@ class WanderlustApp : Application(), ImageLoaderFactory {
         SessionManager.init(this)
         DbProvider.init(this)
         ApiConnection.init(this)
+        if (SocialAuthHelper.facebookConfigured()) {
+            FacebookSdk.setApplicationId(BuildConfig.FACEBOOK_APP_ID)
+            FacebookSdk.setClientToken(BuildConfig.FACEBOOK_CLIENT_TOKEN)
+            FacebookSdk.fullyInitialize()
+        }
         val mapsKey = BuildConfig.MAPS_API_KEY
         if (mapsKey.isNotBlank() && !com.google.android.libraries.places.api.Places.isInitialized()) {
             com.google.android.libraries.places.api.Places.initializeWithNewPlacesApiEnabled(this, mapsKey)

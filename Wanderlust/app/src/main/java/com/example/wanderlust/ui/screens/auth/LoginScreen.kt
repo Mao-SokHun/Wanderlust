@@ -165,6 +165,14 @@ fun LoginScreen(
             }
 
             Spacer(Modifier.height(16.dp))
+            com.example.wanderlust.ui.components.SocialAuthButtons(
+                enabled = !state.isLoading,
+                onGoogleToken = viewModel::loginWithGoogle,
+                onFacebookToken = viewModel::loginWithFacebook,
+                onError = viewModel::setError,
+            )
+
+            Spacer(Modifier.height(16.dp))
             TextButton(onClick = onSignUp, modifier = Modifier.fillMaxWidth()) {
                 Text(
                     stringApp(R.string.login_sign_up_prompt),

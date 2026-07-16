@@ -1,26 +1,23 @@
 package com.example.wanderlust.data
 
-import com.example.wanderlust.data.DestinationCatalog.allDestinations
-
-/** Guest users see a small preview; full catalog requires sign-in. */
+/**
+ * Access rules:
+ * - Guest + logged-in: browse / search places, open tours.
+ * - Logged-in only: Saved list and save actions.
+ */
 object GuestAccess {
-    const val PREVIEW_LIMIT = 4
-
-    private val previewIds: Set<String> by lazy {
-        allDestinations.take(PREVIEW_LIMIT).map { it.id }.toSet()
-    }
-
     fun isLoggedIn(): Boolean = SessionManager.isLoggedIn()
 
-    fun <T> limitForGuest(items: List<T>): List<T> =
-        if (isLoggedIn()) items else items.take(PREVIEW_LIMIT)
+    /** Full lists for everyone — no preview cap. */
+    fun <T> limitForGuest(items: List<T>): List<T> = items
 
-    fun canViewDestination(destination: DestinationCard): Boolean =
-        when {
-            destination.isCustomPlace || destination.id.startsWith("custom-") -> isLoggedIn()
-            isLoggedIn() -> true
-            else -> destination.id in previewIds
-        }
+    fun canViewDestination(destination: DestinationCard): Boolean = true
 
-    fun totalPlaceCount(): Int = allDestinations.size
+    fun canBrowseTours(): Boolean = true
+
+    fun canUseSavedFeature(): Boolean = isLoggedIn()
+
+    fun requiresAccountToSave(): Boolean = !canUseSavedFeature()
+
+    fun totalPlaceCount(): Int = DestinationCatalog.allDestinations.size
 }

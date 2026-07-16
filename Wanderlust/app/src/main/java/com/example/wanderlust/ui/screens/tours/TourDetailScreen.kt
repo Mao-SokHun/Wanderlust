@@ -34,8 +34,11 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,6 +65,7 @@ import com.example.wanderlust.locale.localizedLocation
 import com.example.wanderlust.locale.localizedTitle
 import com.example.wanderlust.locale.stringLocalized
 import com.example.wanderlust.ui.components.DestinationTitleBlock
+import com.example.wanderlust.ui.components.RegisterToSaveDialog
 import com.example.wanderlust.ui.components.StitchGhostCard
 import com.example.wanderlust.ui.components.TourPackageSections
 import com.example.wanderlust.ui.components.TripDetailSections
@@ -100,24 +104,28 @@ private fun TourDetailContent(
     onRegister: () -> Unit,
     viewModel: TourDetailViewModel,
 ) {
-    if (!GuestAccess.canViewDestination(destination)) {
-        Column(Modifier.fillMaxSize()) {
-            Row(Modifier.padding(8.dp)) {
-                IconButton(onClick = onBack) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                }
-            }
-            com.example.wanderlust.ui.components.LoginRequiredPanel(
-                onSignIn = onSignIn,
-                onRegister = onRegister,
-            )
-        }
-        return
-    }
-
     val context = LocalContext.current
     val snackbar = remember { SnackbarHostState() }
+    var showRegisterToSave by remember { mutableStateOf(false) }
     val placeLabel = destination.localizedLocation()
+
+    fun trySave() {
+        if (GuestAccess.requiresAccountToSave()) {
+            showRegisterToSave = true
+        } else {
+            viewModel.toggleSave(destination)
+            onSavePlace()
+        }
+    }
+
+    if (showRegisterToSave) {
+        RegisterToSaveDialog(
+            onDismiss = { showRegisterToSave = false },
+            onRegister = onRegister,
+            onSignIn = onSignIn,
+        )
+    }
+
     val location = remember(destination.id, destination.latitude, destination.longitude, placeLabel) {
         if (destination.latitude != null && destination.longitude != null) {
             GeoLocation(placeLabel, destination.latitude, destination.longitude)
@@ -375,11 +383,17 @@ private fun TourDetailContent(
                                 color = MaterialTheme.colorScheme.primary,
                             )
                         }
-                        Button(onClick = {
-                            viewModel.toggleSave(destination)
-                            onSavePlace()
-                        }) {
-                            Text(stringLocalized(R.string.btn_save_place, R.string.btn_save_place_kh))
+                        Button(onClick = { trySave() }) {
+                            Text(
+                                if (GuestAccess.requiresAccountToSave()) {
+                                    stringLocalized(
+                                        R.string.guest_save_alert_title,
+                                        R.string.guest_save_alert_title_kh,
+                                    )
+                                } else {
+                                    stringLocalized(R.string.btn_save_place, R.string.btn_save_place_kh)
+                                },
+                            )
                         }
                     }
                 }
@@ -424,7 +438,7 @@ private fun TourDetailContent(
             IconButton(onClick = onBack) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = Color.White)
             }
-            IconButton(onClick = { viewModel.toggleSave(destination) }) {
+            IconButton(onClick = { trySave() }) {
                 Icon(
                     if (viewModel.isSaved) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                     contentDescription = null,

@@ -14,6 +14,9 @@ val localProperties = Properties().apply {
     }
 }
 val mapsApiKey: String = localProperties.getProperty("MAPS_API_KEY", "")
+val googleWebClientId: String = localProperties.getProperty("GOOGLE_WEB_CLIENT_ID", "")
+val facebookAppId: String = localProperties.getProperty("FACEBOOK_APP_ID", "")
+val facebookClientToken: String = localProperties.getProperty("FACEBOOK_CLIENT_TOKEN", "")
 
 val keystoreProperties = Properties().apply {
     val file = rootProject.file("keystore.properties")
@@ -35,10 +38,18 @@ android {
         targetSdk = 35
         // Bump BOTH when shipping an update (see backend/APP_UPDATE.md).
         // Keep APP_VERSION_CODE / APP_VERSION_NAME on the API in sync.
-        versionCode = 3
-        versionName = "1.2"
+        versionCode = 4
+        versionName = "1.2.1"
         buildConfigField("String", "MAPS_API_KEY", "\"$mapsApiKey\"")
+        buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"$googleWebClientId\"")
+        buildConfigField("String", "FACEBOOK_APP_ID", "\"$facebookAppId\"")
+        buildConfigField("String", "FACEBOOK_CLIENT_TOKEN", "\"$facebookClientToken\"")
+        resValue("string", "facebook_app_id", facebookAppId.ifBlank { "0" })
+        resValue("string", "facebook_client_token", facebookClientToken.ifBlank { "0" })
+        resValue("string", "fb_login_protocol_scheme", "fb${facebookAppId.ifBlank { "0" }}")
         manifestPlaceholders["MAPS_API_KEY"] = mapsApiKey
+        manifestPlaceholders["FACEBOOK_APP_ID"] = facebookAppId.ifBlank { "0" }
+        manifestPlaceholders["FACEBOOK_CLIENT_TOKEN"] = facebookClientToken.ifBlank { "0" }
     }
 
     signingConfigs {
@@ -98,6 +109,10 @@ dependencies {
     implementation(libs.play.services.location)
     implementation(libs.maps.compose)
     implementation(libs.places)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services)
+    implementation(libs.googleid)
+    implementation(libs.facebook.login)
     implementation("com.google.android.material:material:1.12.0")
     ksp(libs.androidx.room.compiler)
     testImplementation(libs.junit)

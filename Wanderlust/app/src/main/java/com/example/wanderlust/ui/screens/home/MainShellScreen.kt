@@ -82,6 +82,7 @@ fun MainShellScreen(
             WanderlustNavTab.Home -> HomeScreen(
                 onDestinationClick = onDestinationClick,
                 onSignIn = onSignIn,
+                onRegister = onRegister,
                 onPlaceSaved = { favoritesViewModel.refresh() },
             )
             WanderlustNavTab.Tours -> ToursMarketplaceScreen(

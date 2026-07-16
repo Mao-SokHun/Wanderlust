@@ -16,8 +16,13 @@
     <string name="btn_login">Sign In</string>
     <string name="btn_register">Register</string>
     <string name="welcome_option_hint">Please choose Login or Register</string>
-    <string name="welcome_social_hint">Google → Login · Apple → Register (no OAuth in demo)</string>
-    <string name="welcome_social_hint_kh">Google → ចូល · Apple → ចុះឈ្មោះ (មិនមាន OAuth)</string>
+    <string name="welcome_social_hint">Use Google or Facebook to create an account for saving places</string>
+    <string name="welcome_social_hint_kh">ប្រើ Google ឬ Facebook ដើម្បីបង្កើតគណនីសម្រាប់រក្សាទុកកន្លែង</string>
+    <string name="auth_or_continue">Or continue with</string>
+    <string name="auth_or_continue_kh">ឬបន្តជាមួយ</string>
+    <string name="auth_google">Google</string>
+    <string name="auth_facebook">Facebook</string>
+    <string name="auth_social_failed">Social sign-in failed</string>
     <string name="theme_dark">Dark mode</string>
     <string name="theme_light">Light mode</string>
 
@@ -819,10 +824,14 @@
     <string name="guest_banner_title_kh">ចូលគណនីដើម្បីមើលកន្លែងទាំងអស់</string>
     <string name="guest_banner_body">You are browsing %1$d of %2$d places. Create a free account for the full Cambodia list, save places, and sync across devices.</string>
     <string name="guest_banner_sign_in">Sign in or register</string>
-    <string name="guest_login_required_title">Sign in required</string>
-    <string name="guest_login_required_title_kh">ត្រូវការចូលគណនី</string>
-    <string name="guest_login_required_body">Save places, view all destinations, and use your profile after you sign in.</string>
-    <string name="guest_login_required_body_kh">រក្សាទុក មើលកន្លែងទាំងអស់ និងប្រើប្រវត្តិរូប បន្ទាប់ពីចូលគណនី</string>
+    <string name="guest_login_required_title">Register to use Saved</string>
+    <string name="guest_login_required_title_kh">ចុះឈ្មោះដើម្បីប្រើ Saved</string>
+    <string name="guest_login_required_body">Guests can search and view tours freely. Create an account to save places to your list.</string>
+    <string name="guest_login_required_body_kh">ភ្ញៀវអាចស្វែងរក និងមើលដំណើរកម្សាន្តបាន។ បង្កើតគណនីដើម្បីរក្សាទុកកន្លែង។</string>
+    <string name="guest_save_alert_title">Register to save</string>
+    <string name="guest_save_alert_title_kh">ចុះឈ្មោះដើម្បីរក្សាទុក</string>
+    <string name="guest_save_alert_body">Anyone can browse places and tours. Saving to your list needs a free account (email, Google, or Facebook).</string>
+    <string name="guest_save_alert_body_kh">អ្នកណាក៏អាចមើលកន្លែង និងដំណើរកម្សាន្តបាន។ ការរក្សាទុកត្រូវការគណនីឥតគិតថ្លៃ (email, Google ឬ Facebook)។</string>
     <string name="guest_place_locked">This place is available after sign-in.</string>
     <string name="guest_place_locked_kh">កន្លែងនេះមើលបានបន្ទាប់ពីចូលគណនី</string>
 
@@ -852,8 +861,8 @@
     <string name="btn_change_password">Save new password</string>
     <string name="settings_change_password">Change password</string>
     <string name="settings_change_password_sub">Update your account password</string>
-    <string name="profile_guest_title">Browse as guest</string>
-    <string name="profile_guest_subtitle">Sign in to unlock all places and saved lists</string>
+    <string name="profile_guest_title">Browsing as guest</string>
+    <string name="profile_guest_subtitle">Sign in only when you want to save places or use business tools</string>
 
     <!-- Profile &amp; settings (real-app style) -->
     <string name="profile_section_account">Account</string>
@@ -1194,8 +1203,8 @@
     <string name="profile_change_password_sub_kh">ធ្វើបច្ចុប្បន្នភាពពាក្យសម្ងាត់ចូល</string>
     <string name="profile_edit_kh">កែប្រវត្តិរូប</string>
     <string name="profile_edit_sub_kh">ឈ្មោះ ទូរស័ព្ទ ទីក្រុង របៀបធ្វើដំណើរ និងច្រើនទៀត</string>
-    <string name="profile_guest_subtitle_kh">ចូលដើម្បីមើលកន្លែងទាំងអស់ និងបញ្ជីរក្សាទុក</string>
-    <string name="profile_guest_title_kh">មើលជាភ្ញៀវ</string>
+    <string name="profile_guest_subtitle_kh">ចូលគណនីតែពេលចង់រក្សាទុក ឬប្រើឧបករណ៍អាជីវកម្ម</string>
+    <string name="profile_guest_title_kh">កំពុងមើលជាភ្ញៀវ</string>
     <string name="profile_help_kh">មជ្ឈមណ្ឌលជំនួយ</string>
     <string name="profile_logout_kh">ចាកចេញ</string>
     <string name="profile_section_account_kh">គណនី</string>

@@ -263,6 +263,14 @@ fun RegisterScreen(
             }
 
             Spacer(Modifier.height(14.dp))
+            com.example.wanderlust.ui.components.SocialAuthButtons(
+                enabled = !state.isLoading,
+                onGoogleToken = viewModel::registerWithGoogle,
+                onFacebookToken = viewModel::registerWithFacebook,
+                onError = viewModel::setError,
+            )
+
+            Spacer(Modifier.height(14.dp))
             TextButton(onClick = onSignIn, modifier = Modifier.fillMaxWidth()) {
                 Text(
                     stringApp(R.string.register_sign_in_prompt),

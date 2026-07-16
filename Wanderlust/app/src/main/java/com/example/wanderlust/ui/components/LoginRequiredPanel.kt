@@ -49,12 +49,12 @@ fun LoginRequiredPanel(
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(20.dp))
-        Button(onClick = onSignIn, modifier = Modifier.fillMaxWidth()) {
-            Text(stringApp(R.string.btn_login))
+        Button(onClick = onRegister, modifier = Modifier.fillMaxWidth()) {
+            Text(stringApp(R.string.btn_register))
         }
         Spacer(Modifier.height(8.dp))
-        OutlinedButton(onClick = onRegister, modifier = Modifier.fillMaxWidth()) {
-            Text(stringApp(R.string.btn_register))
+        OutlinedButton(onClick = onSignIn, modifier = Modifier.fillMaxWidth()) {
+            Text(stringApp(R.string.btn_login))
         }
     }
 }

@@ -118,6 +118,42 @@ class RegisterViewModel(
         }
     }
 
+    fun registerWithGoogle(idToken: String) {
+        viewModelScope.launch {
+            uiState = uiState.copy(isLoading = true, errorMessage = null, registerSuccess = false)
+            repository.socialLogin(provider = "google", idToken = idToken)
+                .onSuccess {
+                    uiState = uiState.copy(isLoading = false, registerSuccess = true)
+                }
+                .onFailure { error ->
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        errorMessage = error.message ?: "Google sign-in failed",
+                    )
+                }
+        }
+    }
+
+    fun registerWithFacebook(accessToken: String) {
+        viewModelScope.launch {
+            uiState = uiState.copy(isLoading = true, errorMessage = null, registerSuccess = false)
+            repository.socialLogin(provider = "facebook", accessToken = accessToken)
+                .onSuccess {
+                    uiState = uiState.copy(isLoading = false, registerSuccess = true)
+                }
+                .onFailure { error ->
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        errorMessage = error.message ?: "Facebook sign-in failed",
+                    )
+                }
+        }
+    }
+
+    fun setError(message: String) {
+        uiState = uiState.copy(errorMessage = message, isLoading = false)
+    }
+
     fun resetSuccess() {
         uiState = uiState.copy(registerSuccess = false)
     }

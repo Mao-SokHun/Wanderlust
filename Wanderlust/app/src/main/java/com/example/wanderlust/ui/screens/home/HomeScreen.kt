@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.wanderlust.data.DestinationCard
 import com.example.wanderlust.locale.stringLocalized
-import com.example.wanderlust.ui.components.GuestLoginBanner
 import com.example.wanderlust.ui.components.NearbyPlacesExplorer
 import com.example.wanderlust.ui.components.WanderlustBrand
 import com.example.wanderlust.viewmodel.NearbyPlacesViewModel
@@ -48,6 +47,7 @@ import com.example.wanderlust.viewmodel.NearbyPlacesViewModel
 fun HomeScreen(
     onDestinationClick: (DestinationCard) -> Unit,
     onSignIn: () -> Unit = {},
+    onRegister: () -> Unit = onSignIn,
     onPlaceSaved: () -> Unit = {},
 ) {
     val nearbyVm: NearbyPlacesViewModel = viewModel()
@@ -80,10 +80,9 @@ fun HomeScreen(
         NearbyPlacesExplorer(
             viewModel = nearbyVm,
             onSignIn = onSignIn,
+            onRegister = onRegister,
             onPlaceSaved = onPlaceSaved,
         )
-        Spacer(Modifier.height(12.dp))
-        GuestLoginBanner(onSignIn = onSignIn, modifier = Modifier.fillMaxWidth())
         Spacer(Modifier.height(88.dp))
     }
 }

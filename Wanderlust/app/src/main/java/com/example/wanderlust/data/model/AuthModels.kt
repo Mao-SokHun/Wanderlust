@@ -5,6 +5,12 @@ data class LoginRequest(
     val password: String,
 )
 
+data class SocialLoginRequest(
+    val provider: String,
+    val idToken: String? = null,
+    val accessToken: String? = null,
+)
+
 data class RegisterRequest(
     val name: String,
     val email: String,

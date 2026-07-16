@@ -40,7 +40,6 @@ import com.example.wanderlust.data.toDestinationCard
 import com.example.wanderlust.locale.stringApp
 import com.example.wanderlust.locale.stringLocalized
 import com.example.wanderlust.ui.components.DestinationListCard
-import com.example.wanderlust.ui.components.GuestLoginBanner
 import com.example.wanderlust.ui.components.ScreenHeader
 import com.example.wanderlust.ui.components.WanderlustBrand
 import com.example.wanderlust.ui.screens.home.CompactSearchField
@@ -264,7 +263,6 @@ fun ToursMarketplaceScreen(
                     Text(stringLocalized(R.string.business_open_studio, R.string.business_open_studio_kh))
                 }
             }
-            GuestLoginBanner(onSignIn = onSignIn, modifier = Modifier.fillMaxWidth().padding(top = 8.dp))
             if (topTours.isNotEmpty()) {
                 Spacer(Modifier.height(12.dp))
                 Text(
