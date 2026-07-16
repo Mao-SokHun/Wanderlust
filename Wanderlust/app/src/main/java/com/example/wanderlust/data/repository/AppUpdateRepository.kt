@@ -41,7 +41,6 @@ class AppUpdateRepository {
     }
 
     companion object {
-        fun installedVersionLabel(): String =
-            "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"
+        fun installedVersionLabel(): String = BuildConfig.VERSION_NAME
     }
 }

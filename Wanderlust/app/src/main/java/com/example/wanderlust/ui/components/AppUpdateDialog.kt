@@ -48,12 +48,11 @@ fun AppUpdateDialog(
                         R.string.update_available_compare,
                         installed,
                         update.info.versionName,
-                        update.info.versionCode,
                     ),
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Text(
-                    stringApp(R.string.update_available_body, update.info.versionName, update.info.versionCode),
+                    stringApp(R.string.update_available_body, update.info.versionName),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

@@ -70,13 +70,13 @@ fun AppVersionUpdateCard(
                     update = avail
                     if (avail != null) {
                         latestInfo = avail.info
-                        latestLabel = "${avail.info.versionName} (${avail.info.versionCode})"
+                        latestLabel = avail.info.versionName
                         onUpdateFound?.invoke(avail)
                     } else {
                         repo.fetchLatestInfo()
                             .onSuccess { info ->
                                 latestInfo = info
-                                latestLabel = "${info.versionName} (${info.versionCode})"
+                                latestLabel = info.versionName
                             }
                     }
                 }
@@ -129,7 +129,6 @@ fun AppVersionUpdateCard(
                         text = stringApp(
                             R.string.about_update_available,
                             avail.info.versionName,
-                            avail.info.versionCode,
                         ),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.SemiBold,
