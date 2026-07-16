@@ -111,7 +111,15 @@ class PlacesRepository(context: Context) {
             .setMaxResultCount(20)
             .setRankPreference(SearchNearbyRequest.RankPreference.DISTANCE)
             .build()
-        return awaitTask { placesClient.searchNearby(request) }.places
+        return runCatching {
+            awaitTask { placesClient.searchNearby(request) }.places
+        }.getOrElse { error ->
+            if (shouldFallbackToTextSearch(error)) {
+                fallbackSearchByTextForTypes(latitude, longitude, types, radiusMeters)
+            } else {
+                throw error
+            }
+        }
     }
 
     private suspend fun searchByText(
@@ -128,6 +136,39 @@ class PlacesRepository(context: Context) {
             .setRankPreference(SearchByTextRequest.RankPreference.DISTANCE)
             .build()
         return awaitTask { placesClient.searchByText(request) }.places
+    }
+
+    /** Falls back to text search when Nearby Search is blocked for the API key/project. */
+    private suspend fun fallbackSearchByTextForTypes(
+        latitude: Double,
+        longitude: Double,
+        types: List<String>,
+        radiusMeters: Double,
+    ): List<Place> {
+        val queries = if (types.isEmpty()) {
+            NearbyPlaceCategories.all.mapNotNull { it.googleType }.distinct()
+        } else {
+            types.distinct()
+        }
+        val merged = linkedMapOf<String, Place>()
+        queries.forEach { type ->
+            searchByText(latitude, longitude, type.replace('_', ' '), radiusMeters)
+                .forEach { place ->
+                    val key = place.id?.toString()
+                        ?: "${place.location?.latitude},${place.location?.longitude}"
+                    merged.putIfAbsent(key, place)
+                }
+        }
+        return merged.values.take(20)
+    }
+
+    /** Detects the Google API error that blocks Places API Nearby Search requests. */
+    private fun shouldFallbackToTextSearch(error: Throwable): Boolean {
+        val message = error.message.orEmpty().lowercase()
+        return "searchnearby" in message ||
+            "places.searchnearby" in message ||
+            "are blocked" in message ||
+            "api places.googleapis.com method" in message
     }
 
     private fun Place.toNearbyPlace(userLat: Double, userLng: Double): NearbyPlace {
