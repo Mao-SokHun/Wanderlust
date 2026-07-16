@@ -15,6 +15,16 @@ val localProperties = Properties().apply {
 }
 val mapsApiKey: String = localProperties.getProperty("MAPS_API_KEY", "")
 
+val keystoreProperties = Properties().apply {
+    val file = rootProject.file("keystore.properties")
+    if (file.exists()) {
+        file.inputStream().use { load(it) }
+    }
+}
+val hasReleaseKeystore =
+    keystoreProperties["storeFile"] != null &&
+        rootProject.file(keystoreProperties["storeFile"].toString()).exists()
+
 android {
     namespace = "com.example.wanderlust"
     compileSdk = 35
@@ -25,16 +35,35 @@ android {
         targetSdk = 35
         // Bump BOTH when shipping an update (see backend/APP_UPDATE.md).
         // Keep APP_VERSION_CODE / APP_VERSION_NAME on the API in sync.
-        versionCode = 2
-        versionName = "1.1"
+        versionCode = 3
+        versionName = "1.2"
         buildConfigField("String", "MAPS_API_KEY", "\"$mapsApiKey\"")
         manifestPlaceholders["MAPS_API_KEY"] = mapsApiKey
+    }
+
+    signingConfigs {
+        if (hasReleaseKeystore) {
+            create("release") {
+                storeFile = rootProject.file(keystoreProperties["storeFile"].toString())
+                storePassword = keystoreProperties["storePassword"].toString()
+                keyAlias = keystoreProperties["keyAlias"].toString()
+                keyPassword = keystoreProperties["keyPassword"].toString()
+            }
+        }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
+            if (hasReleaseKeystore) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
+    }
+
+    lint {
+        // Avoid blocking release builds when IDE/Gradle lock lint cache on Windows.
+        checkReleaseBuilds = false
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
