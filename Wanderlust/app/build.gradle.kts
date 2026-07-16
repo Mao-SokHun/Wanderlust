@@ -38,8 +38,8 @@ android {
         targetSdk = 35
         // Bump BOTH when shipping an update (see backend/APP_UPDATE.md).
         // Keep APP_VERSION_CODE / APP_VERSION_NAME on the API in sync.
-        versionCode = 4
-        versionName = "1.2.1"
+        versionCode = 5
+        versionName = "1.2.2"
         buildConfigField("String", "MAPS_API_KEY", "\"$mapsApiKey\"")
         buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"$googleWebClientId\"")
         buildConfigField("String", "FACEBOOK_APP_ID", "\"$facebookAppId\"")
@@ -59,6 +59,9 @@ android {
                 storePassword = keystoreProperties["storePassword"].toString()
                 keyAlias = keystoreProperties["keyAlias"].toString()
                 keyPassword = keystoreProperties["keyPassword"].toString()
+                // JAR (v1) + APK Signature Scheme v2 — some phones reject v2-only APKs.
+                isV1SigningEnabled = true
+                isV2SigningEnabled = true
             }
         }
     }

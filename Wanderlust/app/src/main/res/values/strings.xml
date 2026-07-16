@@ -962,7 +962,7 @@
     <string name="about_copyright">© 2026 Mao SokHun · Wanderlust</string>
     <string name="update_available_title">Update available</string>
     <string name="update_required_title">Update required</string>
-    <string name="update_available_body">A new Wanderlust version is ready: %1$s. Download and install over this app.</string>
+    <string name="update_available_body">New version %1$s is available.</string>
     <string name="update_available_compare">You have %1$s · New version %2$s</string>
     <string name="update_download">Download update</string>
     <string name="update_later">Later</string>
@@ -1233,7 +1233,7 @@
     <string name="travel_style_family_kh">គ្រួសារ</string>
     <string name="travel_style_friends_kh">មិត្តភ័ក្តិ</string>
     <string name="travel_style_solo_kh">តែម្នាក់</string>
-    <string name="update_available_body_kh">មានកំណែ Wanderlust ថ្មី៖ %1$s។ ទាញយកនិងដំឡើងលើកម្មវិធីនេះ។</string>
+    <string name="update_available_body_kh">មានកំណែថ្មី %1$s។</string>
     <string name="update_available_title_kh">មានការអាប់ដេត</string>
     <string name="update_available_compare_kh">អ្នកមាន %1$s · កំណែថ្មី %2$s</string>
     <string name="update_required_title_kh">ត្រូវអាប់ដេត</string>
